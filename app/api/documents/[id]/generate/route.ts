@@ -1,0 +1,71 @@
+import { env } from "cloudflare:workers";
+import { getLearner, jsonError } from "@/lib/server-auth";
+import { generatedContentSchema } from "@/lib/generated-content";
+
+function vnDayStart(date: Date): string {
+  const parts = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ho_Chi_Minh", year: "numeric", month: "2-digit", day: "2-digit" }).format(date);
+  return new Date(`${parts}T00:00:00+07:00`).toISOString();
+}
+
+function toBase64(bytes: Uint8Array): string {
+  let binary = "";
+  for (let i = 0; i < bytes.length; i += 8192) binary += String.fromCharCode(...bytes.subarray(i, i + 8192));
+  return btoa(binary);
+}
+
+export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
+  const learner = await getLearner(request);
+  if (!learner) return jsonError("Cần đăng nhập để tạo bài học.", 401);
+  if (!env.DB || !env.BUCKET) return jsonError("Lưu trữ chưa khả dụng.", 503);
+  if (!env.GEMINI_API_KEY) return jsonError("AI chưa được kết nối. Vui lòng thử lại sau.", 503);
+  const { id } = await context.params;
+  let body: { consent?: boolean };
+  try { body = await request.json(); } catch { return jsonError("Thiếu xác nhận xử lý tài liệu.", 400); }
+  if (body.consent !== true) return jsonError("Cần đồng ý gửi tài liệu tới Gemini để tạo bài học.", 400);
+
+  const document = await env.DB.prepare(
+    "SELECT id, owner_id AS ownerId, mime_type AS mimeType, storage_key AS storageKey FROM documents WHERE id = ? AND owner_id = ?"
+  ).bind(id, learner.id).first<{ id: string; ownerId: string; mimeType: string; storageKey: string }>();
+  if (!document) return jsonError("Không tìm thấy tài liệu.", 404);
+  const start = vnDayStart(new Date());
+  const used = await env.DB.prepare(
+    "SELECT COUNT(*) AS count FROM generated_contents WHERE owner_id = ? AND created_at >= ?"
+  ).bind(learner.id, start).first<{ count: number }>();
+  if ((used?.count || 0) >= 3) return jsonError("Bạn đã dùng hết 3 lượt AI hôm nay.", 429);
+
+  const object = await env.BUCKET.get(document.storageKey);
+  if (!object) return jsonError("Tệp gốc không còn khả dụng.", 404);
+  const bytes = new Uint8Array(await object.arrayBuffer());
+  const prompt = "Dựa CHỈ trên tài liệu đính kèm, tạo một bài học ngắn bằng tiếng Việt để luyện thi JLPT. Giữ nguyên tiếng Nhật gốc. Trả JSON có title, level (N5-N1), summary và 1-8 câu hỏi trắc nghiệm; mỗi câu có question, đúng 4 options, answerIndex 0-3, explanation và sourceHint là đoạn/trang hỗ trợ đáp án. Không bịa câu hỏi nếu thiếu bằng chứng; không sao chép dài nguyên văn tài liệu. Nếu tài liệu không phù hợp, trả thông báo lỗi trong summary và không tự nghĩ ra kiến thức.";
+  const part = document.mimeType === "text/plain"
+    ? { text: new TextDecoder().decode(bytes) }
+    : { inline_data: { mime_type: document.mimeType, data: toBase64(bytes) } };
+
+  await env.DB.prepare("UPDATE documents SET status = 'PROCESSING' WHERE id = ?").bind(id).run();
+  try {
+    const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent", {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY },
+      body: JSON.stringify({
+        contents: [{ role: "user", parts: [{ text: prompt }, part] }],
+        generationConfig: { responseMimeType: "application/json" },
+      }),
+    });
+    if (!response.ok) throw new Error(`Gemini HTTP ${response.status}`);
+    const result = await response.json() as { candidates?: { content?: { parts?: { text?: string }[] } }[] };
+    const text = result.candidates?.[0]?.content?.parts?.map(item => item.text || "").join("") || "";
+    const parsed = generatedContentSchema.parse(JSON.parse(text));
+    const now = new Date().toISOString();
+    const contentId = crypto.randomUUID();
+    const latest = await env.DB.prepare("SELECT MAX(version) AS version FROM generated_contents WHERE document_id = ?").bind(id).first<{ version: number | null }>();
+    await env.DB.batch([
+      env.DB.prepare("INSERT INTO generated_contents (id, document_id, owner_id, version, status, review_status, payload_json, created_at, updated_at) VALUES (?, ?, ?, ?, 'DRAFT', 'NOT_SUBMITTED', ?, ?, ?)")
+        .bind(contentId, id, learner.id, (latest?.version || 0) + 1, JSON.stringify(parsed), now, now),
+      env.DB.prepare("UPDATE documents SET status = 'PROCESSED' WHERE id = ?").bind(id),
+    ]);
+    return Response.json({ contentId, content: parsed, remainingToday: Math.max(0, 2 - (used?.count || 0)) }, { status: 201 });
+  } catch {
+    await env.DB.prepare("UPDATE documents SET status = 'FAILED' WHERE id = ?").bind(id).run().catch(() => {});
+    return jsonError("AI chưa tạo được bài học từ tệp này. Lượt sử dụng không bị trừ.", 502);
+  }
+}
