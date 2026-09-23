@@ -103,15 +103,16 @@ export default function DocumentsPage() {
       i === questionIndex ? { ...item, options: item.options.map((option, j) => j === optionIndex ? value : option) } : item) } });
   }
 
-  async function saveDraft() {
-    if (!selectedDoc || !draft) return false;
+  async function saveDraft(): Promise<ContentItem | null> {
+    if (!selectedDoc || !draft) return null;
     const response = await authFetch(`/api/documents/${selectedDoc}/content`, {
       method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify(draft.content),
     });
     const result = await response.json() as { id?: string; version?: number; error?: string };
     if (!response.ok || !result.id) throw new Error(result.error || "Không thể lưu bản nháp.");
-    setDraft({ ...draft, id: result.id, version: result.version || draft.version, status: "DRAFT", reviewStatus: "NOT_SUBMITTED" });
-    return true;
+    const saved = { ...draft, id: result.id, version: result.version || draft.version, status: "DRAFT", reviewStatus: "NOT_SUBMITTED" };
+    setDraft(saved);
+    return saved;
   }
 
   async function save() {
@@ -125,14 +126,15 @@ export default function DocumentsPage() {
     if (!selectedDoc || !draft) return;
     setBusy("confirm"); setMessage("");
     try {
-      await saveDraft();
+      const saved = await saveDraft();
+      if (!saved) return;
       const response = await authFetch(`/api/documents/${selectedDoc}/confirm`, {
         method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ visibility }),
       });
       const result = await response.json() as { error?: string; sharePath?: string | null; reviewStatus?: string };
       if (!response.ok) throw new Error(result.error || "Không thể xác nhận bài học.");
       setSharePath(result.sharePath || null);
-      setDraft({ ...draft, status: "USER_CONFIRMED", reviewStatus: result.reviewStatus || "NOT_SUBMITTED" });
+      setDraft({ ...saved, status: "USER_CONFIRMED", reviewStatus: result.reviewStatus || "NOT_SUBMITTED" });
       setMessage(visibility === "PUBLIC" ? "Đã gửi quản trị viên duyệt. Chỉ khi được duyệt, bài học mới xuất hiện công khai." : "Đã xác nhận bài học.");
       await reloadDocuments();
     } catch (error) { setMessage(error instanceof Error ? error.message : "Không thể xác nhận bài học."); }
@@ -173,7 +175,7 @@ export default function DocumentsPage() {
                   <p className="leading-7 text-muted-foreground">AI sẽ đề xuất tóm tắt và câu hỏi có trích dẫn từ tệp. Bạn phải kiểm tra lại trước khi dùng hoặc chia sẻ.</p>
                   {remainingAi !== null && <p className="mt-2 text-sm font-semibold text-[#315b85]">Còn {remainingAi}/3 lượt AI hôm nay</p>}
                   <label className="mt-5 flex items-start gap-3 text-sm leading-6"><input type="checkbox" checked={consent} onChange={event => setConsent(event.target.checked)} className="mt-1 size-4" />
-                    <span>Tôi đồng ý gửi nội dung tệp tới Gemini Free để tạo bài học. Nội dung gửi đi có thể được Google dùng để cải thiện dịch vụ theo điều khoản gói miễn phí; không tải thông tin nhạy cảm lên.</span></label>
+                    <span>Tôi đồng ý gửi nội dung tệp tới Gemini Free để tạo bài học. Nội dung gửi đi có thể được Google dùng để cải thiện dịch vụ; không tải thông tin nhạy cảm lên. <a href="https://ai.google.dev/gemini-api/terms" target="_blank" rel="noreferrer" className="font-semibold text-[#315b85] underline">Xem điều khoản</a>.</span></label>
                   <Button type="button" onClick={generate} disabled={!geminiAvailable || !consent || remainingAi === 0 || Boolean(busy)} className="mt-5">{busy === "generate" ? "AI đang xử lý…" : "Tạo bài học bằng AI"}</Button>
                   {!geminiAvailable && <p className="mt-3 text-sm text-muted-foreground">Tính năng AI sẽ bật khi khóa Gemini được thêm vào cấu hình bảo mật.</p>}
                 </div>}

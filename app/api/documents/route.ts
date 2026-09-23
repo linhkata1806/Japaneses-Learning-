@@ -38,7 +38,7 @@ export async function POST(request: Request) {
   const key = `documents/${learner.id.replace(/[^a-zA-Z0-9:_-]/g, "_")}/${id}`;
   try {
     await ensureProfile(learner);
-    await env.BUCKET.put(key, file.stream(), { httpMetadata: { contentType: file.type } });
+    await env.BUCKET.put(key, await file.arrayBuffer(), { httpMetadata: { contentType: file.type } });
     await env.DB.prepare(
       "INSERT INTO documents (id, owner_id, filename, mime_type, byte_size, storage_key, status, visibility, created_at) VALUES (?, ?, ?, ?, ?, ?, 'UPLOADED', 'PRIVATE', ?)"
     ).bind(id, learner.id, file.name, file.type, file.size, key, new Date().toISOString()).run();

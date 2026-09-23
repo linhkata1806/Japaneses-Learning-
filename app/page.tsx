@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BookOpen, ChevronRight, FileText, Library, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -8,6 +8,8 @@ import { authFetch } from "@/lib/browser-auth";
 
 type Level = "N5" | "N4" | "N3" | "N2" | "N1";
 type Stats = { attempts: number; accuracy: number; xp: number; streak: number; wrongQuestions: string[] };
+type PracticeResult = { level: Level; selectedOption: number; correct: boolean; explanation: string; saved: boolean };
+type ModelContext = { registerTool: (tool: Record<string, unknown>, options?: { signal?: AbortSignal }) => void | Promise<void> };
 const levels: Level[] = ["N5", "N4", "N3", "N2", "N1"];
 const samples: Record<Level, { area: string; title: string; question: string; options: string[]; answer: number; explanation: string; point: string }> = {
   N5: { area: "Từ vựng · Sinh hoạt hằng ngày", title: "Động từ trong câu đơn", question: "毎朝、コーヒーを ______。", options: ["飲みます", "読みます", "見ます", "聞きます"], answer: 0, explanation: "飲みます (のみます) nghĩa là “uống”. Với コーヒーを, đây là động từ phù hợp. Các lựa chọn còn lại lần lượt là đọc, xem và nghe.", point: "飲む · uống" },
@@ -24,6 +26,7 @@ export default function Home() {
   const [account, setAccount] = useState<string | null>(null);
   const [saveMessage, setSaveMessage] = useState("");
   const [stats, setStats] = useState<Stats | null>(null);
+  const practiceAction = useRef<(nextLevel: Level, option: number) => Promise<PracticeResult>>(async () => { throw new Error("Câu hỏi chưa sẵn sàng."); });
   const sample = samples[level];
   const chooseLevel = (next: Level) => { setLevel(next); setSelected(null); setSubmitted(false); setSaveMessage(""); };
 
@@ -35,17 +38,20 @@ export default function Home() {
     }).catch(() => setAccount(null));
   }, []);
 
-  async function submitAnswer() {
-    if (selected === null) return;
+  async function completePractice(nextLevel: Level, option: number): Promise<PracticeResult> {
+    setLevel(nextLevel);
+    setSelected(option);
     setSubmitted(true);
-    if (!account) return;
+    const result = { level: nextLevel, selectedOption: option, correct: option === samples[nextLevel].answer, explanation: samples[nextLevel].explanation, saved: false };
+    if (!account) return result;
     try {
       const response = await authFetch("/api/attempts", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ questionId: level, selectedOption: selected }),
+        body: JSON.stringify({ questionId: nextLevel, selectedOption: option }),
       });
       setSaveMessage(response.ok ? "Đã lưu vào lịch sử học." : "Chưa lưu được bài làm, bạn có thể thử lại.");
+      result.saved = response.ok;
       if (response.ok) {
         const fresh = await authFetch("/api/stats");
         if (fresh.ok) setStats(await fresh.json() as Stats);
@@ -53,6 +59,41 @@ export default function Home() {
     } catch {
       setSaveMessage("Chưa lưu được bài làm, bạn có thể thử lại.");
     }
+    return result;
+  }
+
+  practiceAction.current = completePractice;
+
+  useEffect(() => {
+    const context = (document as Document & { modelContext?: ModelContext }).modelContext;
+    if (!context?.registerTool) return;
+    const lifecycle = new AbortController();
+    const register = (tool: Record<string, unknown>) => Promise.resolve(context.registerTool(tool, { signal: lifecycle.signal })).catch(() => {});
+    void register({
+      name: "read_sample_jlpt_question", title: "Xem câu hỏi JLPT mẫu", description: "Đọc câu hỏi mẫu và bốn lựa chọn của một cấp JLPT mà không nộp bài.",
+      inputSchema: { type: "object", properties: { level: { type: "string", enum: levels } }, required: ["level"], additionalProperties: false },
+      annotations: { readOnlyHint: true, untrustedContentHint: false },
+      execute(input: unknown) {
+        const level = (input as { level?: Level })?.level;
+        if (!level || !levels.includes(level)) throw new Error("Cấp JLPT không hợp lệ.");
+        return { level, question: samples[level].question, options: samples[level].options };
+      },
+    });
+    void register({
+      name: "complete_sample_jlpt_question", title: "Trả lời câu hỏi JLPT mẫu", description: "Chọn cấp JLPT, nộp đáp án câu hỏi mẫu và cập nhật tiến độ hiển thị; lưu bài làm nếu đã đăng nhập.",
+      inputSchema: { type: "object", properties: { level: { type: "string", enum: levels }, selectedOption: { type: "integer", minimum: 0, maximum: 3 } }, required: ["level", "selectedOption"], additionalProperties: false },
+      annotations: { readOnlyHint: false, untrustedContentHint: false },
+      async execute(input: unknown) {
+        const value = input as { level?: Level; selectedOption?: number } | null;
+        if (!value?.level || !levels.includes(value.level) || !Number.isInteger(value.selectedOption) || (value.selectedOption ?? -1) < 0 || (value.selectedOption ?? 4) > 3) throw new Error("Cấp JLPT hoặc đáp án không hợp lệ.");
+        return practiceAction.current(value.level, value.selectedOption!);
+      },
+    });
+    return () => lifecycle.abort();
+  }, []);
+
+  async function submitAnswer() {
+    if (selected !== null) await completePractice(level, selected);
   }
 
   return <div className="min-h-screen bg-background text-foreground">
@@ -68,11 +109,11 @@ export default function Home() {
     </header>
 
     <main className="mx-auto grid max-w-[1420px] gap-8 px-5 py-8 md:px-10 lg:grid-cols-[248px_minmax(0,1fr)_254px] lg:gap-10 lg:py-12">
-      <aside className="space-y-7">
+      <aside className="order-2 space-y-7 lg:order-none">
         <div>
           <p className="eyebrow">Luyện thi JLPT</p>
           <h1 className="mt-2 text-[1.9rem] font-bold leading-tight tracking-tight">Học từng bước,<br />nhớ thật lâu.</h1>
-          <p className="mt-3 max-w-xs text-[0.96rem] leading-7 text-muted-foreground">Chọn cấp độ và thử một câu hỏi. Bài học đầy đủ sẽ mở theo lộ trình của bạn.</p>
+          <p className="mt-3 max-w-xs text-[0.96rem] leading-7 text-muted-foreground">Chọn cấp độ, luyện một câu mẫu và xem lời giải. Bộ bài luyện sẽ được mở rộng dần.</p>
         </div>
         <nav aria-label="Các bước học" className="rounded-2xl border border-border bg-white p-3">
           <div className="flex items-center gap-3 rounded-xl bg-[#e8eef6] px-4 py-3 font-semibold text-[#244a76]"><BookOpen className="size-5" aria-hidden="true" /> Luyện tập</div>
@@ -80,13 +121,13 @@ export default function Home() {
           <a href="/thu-vien" className="flex items-center gap-3 rounded-xl px-4 py-3 text-muted-foreground hover:bg-[#f4f7fa]"><Library className="size-5" aria-hidden="true" /> Thư viện cộng đồng</a>
         </nav>
         <div className="rounded-2xl bg-[#172f46] p-5 text-white">
-          <p className="text-sm font-semibold text-[#b2cadf]">Lộ trình cá nhân</p>
+          <p className="text-sm font-semibold text-[#b2cadf]">Cách học</p>
           <p className="mt-2 text-lg font-bold">Một cấp độ, từng ngày</p>
-          <p className="mt-2 text-sm leading-6 text-[#c6d3df]">Theo dõi bài đã học, câu cần ôn và mức sẵn sàng trước kỳ thi.</p>
+          <p className="mt-2 text-sm leading-6 text-[#c6d3df]">Làm câu hỏi, đọc lời giải và xem lại câu trả lời sai trong tiến độ đã lưu.</p>
         </div>
       </aside>
 
-      <section className="min-w-0">
+      <section className="order-1 min-w-0 lg:order-none">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div><p className="eyebrow">Bắt đầu luyện</p><h2 className="mt-1 text-2xl font-bold tracking-tight md:text-[2rem]">Câu hỏi mẫu theo cấp độ</h2></div>
           <span className="text-sm text-muted-foreground">5 cấp độ · N5–N1</span>
@@ -126,7 +167,7 @@ export default function Home() {
         </article>
       </section>
 
-      <aside className="space-y-5 lg:pt-16">
+      <aside className="order-3 space-y-5 lg:order-none lg:pt-16">
         <div className="rounded-2xl border border-border bg-white p-5">
           <div className="flex items-center justify-between"><h2 className="font-bold">{stats ? "Tiến độ đã lưu" : "Tiến độ học thử"}</h2><span className="text-sm font-semibold text-[#315b85]">{stats ? `${stats.accuracy}%` : submitted ? "1/1" : "0/1"}</span></div>
           <Progress value={stats ? stats.accuracy : submitted ? 100 : 0} className="mt-4 h-2 bg-[#e5edf4] [&_[data-slot=progress-indicator]]:bg-[#e5593f]" />

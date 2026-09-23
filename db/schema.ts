@@ -86,3 +86,11 @@ export const xpTransactions = sqliteTable("xp_transactions", {
 }, (table) => [
   uniqueIndex("idx_xp_once_per_source").on(table.userId, table.sourceType, table.sourceId),
 ]);
+
+export const aiGenerationJobs = sqliteTable("ai_generation_jobs", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  localDay: text("local_day").notNull(),
+  status: text("status").notNull(),
+  createdAt: text("created_at").notNull(),
+}, (table) => [index("idx_ai_jobs_user_day_status").on(table.userId, table.localDay, table.status)]);

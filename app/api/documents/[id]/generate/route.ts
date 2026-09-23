@@ -2,9 +2,8 @@ import { env } from "cloudflare:workers";
 import { getLearner, jsonError } from "@/lib/server-auth";
 import { generatedContentSchema } from "@/lib/generated-content";
 
-function vnDayStart(date: Date): string {
-  const parts = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ho_Chi_Minh", year: "numeric", month: "2-digit", day: "2-digit" }).format(date);
-  return new Date(`${parts}T00:00:00+07:00`).toISOString();
+function vnDay(date: Date): string {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ho_Chi_Minh", year: "numeric", month: "2-digit", day: "2-digit" }).format(date);
 }
 
 function toBase64(bytes: Uint8Array): string {
@@ -27,12 +26,6 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     "SELECT id, owner_id AS ownerId, mime_type AS mimeType, storage_key AS storageKey FROM documents WHERE id = ? AND owner_id = ?"
   ).bind(id, learner.id).first<{ id: string; ownerId: string; mimeType: string; storageKey: string }>();
   if (!document) return jsonError("Không tìm thấy tài liệu.", 404);
-  const start = vnDayStart(new Date());
-  const used = await env.DB.prepare(
-    "SELECT COUNT(*) AS count FROM generated_contents WHERE owner_id = ? AND created_at >= ?"
-  ).bind(learner.id, start).first<{ count: number }>();
-  if ((used?.count || 0) >= 3) return jsonError("Bạn đã dùng hết 3 lượt AI hôm nay.", 429);
-
   const object = await env.BUCKET.get(document.storageKey);
   if (!object) return jsonError("Tệp gốc không còn khả dụng.", 404);
   const bytes = new Uint8Array(await object.arrayBuffer());
@@ -41,8 +34,18 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     ? { text: new TextDecoder().decode(bytes) }
     : { inline_data: { mime_type: document.mimeType, data: toBase64(bytes) } };
 
-  await env.DB.prepare("UPDATE documents SET status = 'PROCESSING' WHERE id = ?").bind(id).run();
+  const now = new Date();
+  const day = vnDay(now);
+  const jobId = crypto.randomUUID();
+  await env.DB.prepare(
+    "UPDATE ai_generation_jobs SET status = 'FAILED' WHERE user_id = ? AND status = 'STARTED' AND created_at < ?"
+  ).bind(learner.id, new Date(now.getTime() - 30 * 60 * 1000).toISOString()).run();
+  const reserved = await env.DB.prepare(
+    "INSERT INTO ai_generation_jobs (id, user_id, local_day, status, created_at) SELECT ?, ?, ?, 'STARTED', ? WHERE (SELECT COUNT(*) FROM ai_generation_jobs WHERE user_id = ? AND local_day = ? AND status IN ('STARTED', 'SUCCEEDED')) < 3"
+  ).bind(jobId, learner.id, day, now.toISOString(), learner.id, day).run();
+  if (reserved.meta.changes === 0) return jsonError("Bạn đã dùng hết 3 lượt AI hôm nay.", 429);
   try {
+    await env.DB.prepare("UPDATE documents SET status = 'PROCESSING' WHERE id = ?").bind(id).run();
     const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent", {
       method: "POST",
       headers: { "content-type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY },
@@ -55,17 +58,24 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     const result = await response.json() as { candidates?: { content?: { parts?: { text?: string }[] } }[] };
     const text = result.candidates?.[0]?.content?.parts?.map(item => item.text || "").join("") || "";
     const parsed = generatedContentSchema.parse(JSON.parse(text));
-    const now = new Date().toISOString();
+    const completedAt = new Date().toISOString();
     const contentId = crypto.randomUUID();
     const latest = await env.DB.prepare("SELECT MAX(version) AS version FROM generated_contents WHERE document_id = ?").bind(id).first<{ version: number | null }>();
     await env.DB.batch([
       env.DB.prepare("INSERT INTO generated_contents (id, document_id, owner_id, version, status, review_status, payload_json, created_at, updated_at) VALUES (?, ?, ?, ?, 'DRAFT', 'NOT_SUBMITTED', ?, ?, ?)")
-        .bind(contentId, id, learner.id, (latest?.version || 0) + 1, JSON.stringify(parsed), now, now),
+        .bind(contentId, id, learner.id, (latest?.version || 0) + 1, JSON.stringify(parsed), completedAt, completedAt),
       env.DB.prepare("UPDATE documents SET status = 'PROCESSED' WHERE id = ?").bind(id),
+      env.DB.prepare("UPDATE ai_generation_jobs SET status = 'SUCCEEDED' WHERE id = ?").bind(jobId),
     ]);
-    return Response.json({ contentId, content: parsed, remainingToday: Math.max(0, 2 - (used?.count || 0)) }, { status: 201 });
+    const used = await env.DB.prepare(
+      "SELECT COUNT(*) AS count FROM ai_generation_jobs WHERE user_id = ? AND local_day = ? AND status IN ('STARTED', 'SUCCEEDED')"
+    ).bind(learner.id, day).first<{ count: number }>();
+    return Response.json({ contentId, content: parsed, remainingToday: Math.max(0, 3 - (used?.count || 0)) }, { status: 201 });
   } catch {
-    await env.DB.prepare("UPDATE documents SET status = 'FAILED' WHERE id = ?").bind(id).run().catch(() => {});
+    await env.DB.batch([
+      env.DB.prepare("UPDATE documents SET status = 'FAILED' WHERE id = ?").bind(id),
+      env.DB.prepare("UPDATE ai_generation_jobs SET status = 'FAILED' WHERE id = ?").bind(jobId),
+    ]).catch(() => {});
     return jsonError("AI chưa tạo được bài học từ tệp này. Lượt sử dụng không bị trừ.", 502);
   }
 }
