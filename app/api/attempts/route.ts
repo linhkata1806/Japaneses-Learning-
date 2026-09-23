@@ -1,7 +1,8 @@
 import { env } from "cloudflare:workers";
 import { ensureProfile, getLearner, jsonError } from "@/lib/server-auth";
 
-const answers: Record<string, number> = { N5: 0, N4: 2, N3: 0, N2: 0, N1: 0 };
+// Chỉ câu mẫu N5 đang được mở; không cho nộp cấp cao hơn qua API.
+const answers: Record<string, number> = { N5: 0 };
 
 export async function GET(request: Request) {
   const learner = await getLearner(request);
@@ -25,6 +26,9 @@ export async function POST(request: Request) {
   try { input = await request.json(); } catch { return jsonError("Dữ liệu câu trả lời không hợp lệ.", 400); }
   const questionId = input.questionId;
   const selected = input.selectedOption;
+  if (["N4", "N3", "N2", "N1"].includes(questionId || "")) {
+    return jsonError("Cấp này chưa mở. Cần hoàn thành lộ trình và đỗ đề cuối cấp trước.", 403);
+  }
   if (!questionId || !(questionId in answers) || !Number.isInteger(selected) || selected! < 0 || selected! > 3) {
     return jsonError("Câu trả lời không hợp lệ.", 400);
   }

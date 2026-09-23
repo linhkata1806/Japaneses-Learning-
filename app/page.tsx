@@ -1,34 +1,37 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { BookOpen, ChevronRight, FileText, Library, RotateCcw } from "lucide-react";
+import Link from "next/link";
+import { BookOpen, ChevronRight, FileText, Library, LockKeyhole, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { authFetch } from "@/lib/browser-auth";
 
 type Level = "N5" | "N4" | "N3" | "N2" | "N1";
 type Stats = { attempts: number; accuracy: number; xp: number; streak: number; wrongQuestions: string[] };
+type ExternalExample = { text: string; author: string; license: string; url: string };
 type PracticeResult = { level: Level; selectedOption: number; correct: boolean; explanation: string; saved: boolean };
 type ModelContext = { registerTool: (tool: Record<string, unknown>, options?: { signal?: AbortSignal }) => void | Promise<void> };
 const levels: Level[] = ["N5", "N4", "N3", "N2", "N1"];
-const samples: Record<Level, { area: string; title: string; question: string; options: string[]; answer: number; explanation: string; point: string }> = {
+const samples: Record<"N5", { area: string; title: string; question: string; options: string[]; answer: number; explanation: string; point: string }> = {
   N5: { area: "Từ vựng · Sinh hoạt hằng ngày", title: "Động từ trong câu đơn", question: "毎朝、コーヒーを ______。", options: ["飲みます", "読みます", "見ます", "聞きます"], answer: 0, explanation: "飲みます (のみます) nghĩa là “uống”. Với コーヒーを, đây là động từ phù hợp. Các lựa chọn còn lại lần lượt là đọc, xem và nghe.", point: "飲む · uống" },
-  N4: { area: "Ngữ pháp · Nêu lý do", title: "Diễn đạt nguyên nhân", question: "今日は寒い ______、コートを着ます。", options: ["まで", "だけ", "ので", "より"], answer: 2, explanation: "ので nối nguyên nhân với kết quả: vì hôm nay lạnh nên mặc áo khoác. Các từ còn lại không diễn đạt quan hệ nguyên nhân ở đây.", point: "ので · vì, bởi vì" },
-  N3: { area: "Ngữ pháp · Làm theo hướng dẫn", title: "Diễn đạt “đúng như”", question: "先生に言われた ______、宿題を出しました。", options: ["とおりに", "ばかりに", "ところに", "かわりに"], answer: 0, explanation: "とおりに nghĩa là làm đúng như điều được nói hoặc hướng dẫn. Câu này là “Tôi đã nộp bài tập đúng như thầy/cô dặn”.", point: "とおりに · đúng như" },
-  N2: { area: "Ngữ pháp · Bổ sung thông tin", title: "Hai ưu điểm song song", question: "この店は駅に近い ______、値段も手ごろだ。", options: ["うえに", "ものの", "ところで", "わりに"], answer: 0, explanation: "うえに bổ sung thêm một đặc điểm cùng chiều: cửa hàng vừa gần ga, giá lại phải chăng.", point: "うえに · hơn nữa" },
-  N1: { area: "Ngữ pháp · Khả năng tiêu cực", title: "Dự đoán hệ quả", question: "彼の発言は誤解を招き ______。", options: ["かねない", "がたい", "かねる", "きれない"], answer: 0, explanation: "～かねない diễn tả khả năng xảy ra một kết quả không mong muốn. Ở đây, phát biểu của anh ấy có thể gây hiểu lầm.", point: "かねない · có nguy cơ" },
 };
 
 export default function Home() {
-  const [level, setLevel] = useState<Level>("N5");
+  const [level, setLevel] = useState<"N5">("N5");
   const [selected, setSelected] = useState<number | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [account, setAccount] = useState<string | null>(null);
   const [saveMessage, setSaveMessage] = useState("");
   const [stats, setStats] = useState<Stats | null>(null);
+  const [examples, setExamples] = useState<ExternalExample[]>([]);
+  const [examplesUnavailable, setExamplesUnavailable] = useState(false);
   const practiceAction = useRef<(nextLevel: Level, option: number) => Promise<PracticeResult>>(async () => { throw new Error("Câu hỏi chưa sẵn sàng."); });
   const sample = samples[level];
-  const chooseLevel = (next: Level) => { setLevel(next); setSelected(null); setSubmitted(false); setSaveMessage(""); };
+  const chooseLevel = (next: Level) => {
+    if (next !== "N5") return;
+    setLevel(next); setSelected(null); setSubmitted(false); setSaveMessage("");
+  };
 
   useEffect(() => {
     authFetch("/api/me").then(response => response.json()).then(value => {
@@ -38,7 +41,14 @@ export default function Home() {
     }).catch(() => setAccount(null));
   }, []);
 
+  useEffect(() => {
+    fetch("/api/examples").then(response => response.ok ? response.json() : Promise.reject()).then(value => {
+      setExamples((value as { examples: ExternalExample[] }).examples);
+    }).catch(() => setExamplesUnavailable(true));
+  }, []);
+
   async function completePractice(nextLevel: Level, option: number): Promise<PracticeResult> {
+    if (nextLevel !== "N5") throw new Error("Cấp này chưa mở. Cần hoàn thành lộ trình và đỗ bài thi thử cuối cấp trước.");
     setLevel(nextLevel);
     setSelected(option);
     setSubmitted(true);
@@ -62,7 +72,7 @@ export default function Home() {
     return result;
   }
 
-  practiceAction.current = completePractice;
+  useEffect(() => { practiceAction.current = completePractice; });
 
   useEffect(() => {
     const context = (document as Document & { modelContext?: ModelContext }).modelContext;
@@ -71,21 +81,21 @@ export default function Home() {
     const register = (tool: Record<string, unknown>) => Promise.resolve(context.registerTool(tool, { signal: lifecycle.signal })).catch(() => {});
     void register({
       name: "read_sample_jlpt_question", title: "Xem câu hỏi JLPT mẫu", description: "Đọc câu hỏi mẫu và bốn lựa chọn của một cấp JLPT mà không nộp bài.",
-      inputSchema: { type: "object", properties: { level: { type: "string", enum: levels } }, required: ["level"], additionalProperties: false },
+      inputSchema: { type: "object", properties: { level: { type: "string", enum: ["N5"] } }, required: ["level"], additionalProperties: false },
       annotations: { readOnlyHint: true, untrustedContentHint: false },
       execute(input: unknown) {
         const level = (input as { level?: Level })?.level;
-        if (!level || !levels.includes(level)) throw new Error("Cấp JLPT không hợp lệ.");
+        if (level !== "N5") throw new Error("Cấp này chưa mở.");
         return { level, question: samples[level].question, options: samples[level].options };
       },
     });
     void register({
       name: "complete_sample_jlpt_question", title: "Trả lời câu hỏi JLPT mẫu", description: "Chọn cấp JLPT, nộp đáp án câu hỏi mẫu và cập nhật tiến độ hiển thị; lưu bài làm nếu đã đăng nhập.",
-      inputSchema: { type: "object", properties: { level: { type: "string", enum: levels }, selectedOption: { type: "integer", minimum: 0, maximum: 3 } }, required: ["level", "selectedOption"], additionalProperties: false },
+      inputSchema: { type: "object", properties: { level: { type: "string", enum: ["N5"] }, selectedOption: { type: "integer", minimum: 0, maximum: 3 } }, required: ["level", "selectedOption"], additionalProperties: false },
       annotations: { readOnlyHint: false, untrustedContentHint: false },
       async execute(input: unknown) {
         const value = input as { level?: Level; selectedOption?: number } | null;
-        if (!value?.level || !levels.includes(value.level) || !Number.isInteger(value.selectedOption) || (value.selectedOption ?? -1) < 0 || (value.selectedOption ?? 4) > 3) throw new Error("Cấp JLPT hoặc đáp án không hợp lệ.");
+        if (value?.level !== "N5" || !Number.isInteger(value.selectedOption) || (value.selectedOption ?? -1) < 0 || (value.selectedOption ?? 4) > 3) throw new Error("Cấp JLPT chưa mở hoặc đáp án không hợp lệ.");
         return practiceAction.current(value.level, value.selectedOption!);
       },
     });
@@ -99,10 +109,10 @@ export default function Home() {
   return <div className="min-h-screen bg-background text-foreground">
     <header className="border-b border-border bg-white">
       <div className="mx-auto flex max-w-[1420px] items-center justify-between gap-4 px-5 py-4 md:px-10">
-        <a href="/" className="flex items-center gap-3 text-[1.05rem] font-bold tracking-tight">
+        <Link href="/" className="flex items-center gap-3 text-[1.05rem] font-bold tracking-tight">
           <span className="grid size-10 place-items-center rounded-xl bg-primary text-lg font-bold text-primary-foreground">日</span>
           <span>Manabi<span className="text-[#e5593f]">.</span></span>
-        </a>
+        </Link>
         {account ? <span className="max-w-[45vw] truncate rounded-full border border-border px-3 py-1 text-sm font-medium text-muted-foreground">{account}</span>
           : <a href="/auth" className="rounded-full border border-border px-3 py-1 text-sm font-medium text-[#1c456b] hover:bg-[#eef5fb]">Đăng nhập để lưu tiến độ</a>}
       </div>
@@ -113,7 +123,7 @@ export default function Home() {
         <div>
           <p className="eyebrow">Luyện thi JLPT</p>
           <h1 className="mt-2 text-[1.9rem] font-bold leading-tight tracking-tight">Học từng bước,<br />nhớ thật lâu.</h1>
-          <p className="mt-3 max-w-xs text-[0.96rem] leading-7 text-muted-foreground">Chọn cấp độ, luyện một câu mẫu và xem lời giải. Bộ bài luyện sẽ được mở rộng dần.</p>
+          <p className="mt-3 max-w-xs text-[0.96rem] leading-7 text-muted-foreground">Bắt đầu từ N5, luyện câu mẫu và xem lời giải. Các cấp tiếp theo chỉ mở sau khi hoàn thành lộ trình và đỗ bài thi thử cuối cấp.</p>
         </div>
         <nav aria-label="Các bước học" className="rounded-2xl border border-border bg-white p-3">
           <div className="flex items-center gap-3 rounded-xl bg-[#e8eef6] px-4 py-3 font-semibold text-[#244a76]"><BookOpen className="size-5" aria-hidden="true" /> Luyện tập</div>
@@ -130,11 +140,12 @@ export default function Home() {
       <section className="order-1 min-w-0 lg:order-none">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div><p className="eyebrow">Bắt đầu luyện</p><h2 className="mt-1 text-2xl font-bold tracking-tight md:text-[2rem]">Câu hỏi mẫu theo cấp độ</h2></div>
-          <span className="text-sm text-muted-foreground">5 cấp độ · N5–N1</span>
+          <span className="text-sm text-muted-foreground">N5 đang học thử · N4–N1 chưa mở</span>
         </div>
         <div aria-label="Chọn cấp JLPT" className="mt-6 flex flex-wrap gap-2">
-          {levels.map(item => <Button key={item} type="button" variant={item === level ? "default" : "outline"} aria-pressed={item === level} onClick={() => chooseLevel(item)} className="h-11 min-w-16 rounded-xl px-5 text-base">{item}</Button>)}
+          {levels.map(item => <Button key={item} type="button" variant={item === level ? "default" : "outline"} aria-pressed={item === level} disabled={item !== "N5"} onClick={() => chooseLevel(item)} className="h-11 min-w-16 rounded-xl px-5 text-base">{item !== "N5" && <LockKeyhole aria-hidden="true" className="size-3.5" />}{item}</Button>)}
         </div>
+        <p className="mt-3 text-sm leading-6 text-muted-foreground">N4 mở sau khi học hết lộ trình N5 và đỗ đề cuối cấp. Hiện bản beta chưa có đủ bài học và đề cuối cấp, nên câu mẫu này không dùng để mở khóa.</p>
         <article className="mt-7 overflow-hidden rounded-[24px] border border-border bg-white shadow-[0_20px_60px_rgba(27,47,69,0.07)]">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-[#f6f8fb] px-6 py-5 md:px-8">
             <div><p className="text-sm font-semibold text-[#55728f]">{level} · {sample.area}</p><h3 className="mt-1 text-xl font-bold">{sample.title}</h3></div>
@@ -143,6 +154,7 @@ export default function Home() {
           <div className="px-6 pb-7 pt-7 md:px-8 md:pb-8">
             <p className="text-sm font-semibold text-muted-foreground">Chọn đáp án đúng</p>
             <p lang="ja" className="mt-4 rounded-xl border border-[#dce5ed] bg-[#f8fafc] px-5 py-6 text-[1.35rem] font-medium leading-relaxed md:text-[1.55rem]">{sample.question}</p>
+            <p className="mt-3 text-sm leading-6 text-muted-foreground">Nguồn câu hỏi: nhóm phát triển tự biên soạn cho bản thử; không trích từ đề JLPT hay tài liệu công khai. <a className="font-medium text-[#315b85] underline" href="/nguon-hoc-lieu">Xem nguồn học liệu</a>.</p>
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
               {sample.options.map((option, index) => {
                 const chosen = selected === index;
@@ -163,13 +175,21 @@ export default function Home() {
                 : <Button type="button" disabled={selected === null} onClick={submitAnswer} className="h-11 rounded-xl px-6">Kiểm tra đáp án <ChevronRight aria-hidden="true" /></Button>}
             </div>
             {saveMessage && <p role="status" className="mt-2 text-sm text-muted-foreground">{saveMessage}</p>}
+            <div className="mt-8 border-t border-border pt-6">
+              <h4 className="font-bold">Câu ví dụ ngoài bài tập</h4>
+              <p className="mt-1 text-sm leading-6 text-muted-foreground">Lấy trực tiếp từ API Tatoeba để xem cách dùng từ. Các câu này chưa được biên tập thành câu hỏi thi.</p>
+              {examples.length > 0 ? <ul className="mt-3 space-y-3">{examples.map(example => <li key={example.url} className="rounded-xl bg-[#f6f8fb] p-4">
+                <p lang="ja" className="text-lg font-medium">{example.text}</p>
+                <span className="mt-2 block text-xs text-muted-foreground"><a href={example.url} target="_blank" rel="noreferrer" className="text-[#315b85] underline">Tatoeba · {example.author}</a> · <a href={example.license === "CC0 1.0" ? "https://creativecommons.org/publicdomain/zero/1.0/" : "https://creativecommons.org/licenses/by/2.0/fr/"} target="_blank" rel="noreferrer" className="text-[#315b85] underline">{example.license}</a></span>
+              </li>)}</ul> : <p className="mt-3 text-sm text-muted-foreground">{examplesUnavailable ? "Tatoeba tạm thời không khả dụng; bài luyện vẫn dùng được." : "Đang tải ví dụ…"}</p>}
+            </div>
           </div>
         </article>
       </section>
 
       <aside className="order-3 space-y-5 lg:order-none lg:pt-16">
         <div className="rounded-2xl border border-border bg-white p-5">
-          <div className="flex items-center justify-between"><h2 className="font-bold">{stats ? "Tiến độ đã lưu" : "Tiến độ học thử"}</h2><span className="text-sm font-semibold text-[#315b85]">{stats ? `${stats.accuracy}%` : submitted ? "1/1" : "0/1"}</span></div>
+          <div className="flex items-center justify-between"><h2 className="font-bold">{stats ? "Độ chính xác câu mẫu" : "Câu mẫu đã làm"}</h2><span className="text-sm font-semibold text-[#315b85]">{stats ? `${stats.accuracy}%` : submitted ? "1/1" : "0/1"}</span></div>
           <Progress value={stats ? stats.accuracy : submitted ? 100 : 0} className="mt-4 h-2 bg-[#e5edf4] [&_[data-slot=progress-indicator]]:bg-[#e5593f]" />
           {stats ? <div className="mt-4 grid grid-cols-3 gap-2 text-center">
             <div><strong className="block text-lg">{stats.attempts}</strong><span className="text-xs text-muted-foreground">Câu đã làm</span></div>
@@ -180,8 +200,8 @@ export default function Home() {
         {stats && stats.wrongQuestions.length > 0 && <div className="rounded-2xl border border-border bg-white p-5">
           <h2 className="font-bold">Câu cần ôn</h2>
           <p className="mt-2 text-sm text-muted-foreground">Làm đúng lại để đưa câu ra khỏi danh sách.</p>
-          <div className="mt-3 flex flex-wrap gap-2">{stats.wrongQuestions.filter((item): item is Level => levels.includes(item as Level)).map(item =>
-            <Button key={item} type="button" variant="outline" size="sm" onClick={() => chooseLevel(item)}>{item} <ChevronRight aria-hidden="true" /></Button>
+          <div className="mt-3 flex flex-wrap gap-2">{stats.wrongQuestions.filter(item => item === "N5").map(item =>
+            <Button key={item} type="button" variant="outline" size="sm" onClick={() => chooseLevel("N5")}>{item} <ChevronRight aria-hidden="true" /></Button>
           )}</div>
         </div>}
         <div className="rounded-2xl border border-[#d8e4ef] bg-[#eef5fb] p-5">

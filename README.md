@@ -1,6 +1,8 @@
 # Manabi — web tự học JLPT
 
-Bản beta dành cho nhiều học viên tự học N5–N1. Giao diện hiện có một câu hỏi mẫu cho mỗi cấp, giải thích đáp án, lưu lịch sử làm bài và thống kê XP/chuỗi ngày khi đăng nhập. Học viên có thể tải tài liệu riêng tư lên, tạo bản nháp bài học bằng Gemini, tự kiểm tra/chỉnh sửa, rồi chọn riêng tư, chia sẻ qua liên kết hoặc gửi duyệt công khai. Quản trị viên được cấu hình qua `ADMIN_EMAILS`.
+Bản beta dành cho nhiều học viên tự học JLPT. Giao diện hiện có một câu hỏi N5 **tự biên soạn để thử luồng**, không lấy từ đề JLPT hoặc tài liệu công khai. N4–N1 đang khóa ở giao diện và API; theo đặc tả, từng cấp chỉ được mở sau khi hoàn thành lộ trình bắt buộc và đỗ đề cuối cấp trước đó bằng **điểm ước tính** theo ngưỡng tổng/từng phần. Bản beta chưa có đủ lộ trình và đề cuối cấp, nên hiện chưa thể mở N4. Ví dụ đọc thêm lấy từ Tatoeba API, kèm tác giả/giấy phép/liên kết gốc; chưa dùng API làm ngân hàng đề. Xem `/nguon-hoc-lieu`.
+
+Bài mẫu có giải thích đáp án, lưu lịch sử làm bài và thống kê XP/chuỗi ngày khi đăng nhập. Học viên có thể tải tài liệu riêng tư lên, tạo bản nháp bài học bằng Gemini, tự kiểm tra/chỉnh sửa, rồi chọn riêng tư, chia sẻ qua liên kết hoặc gửi duyệt công khai. Quản trị viên được cấu hình qua `ADMIN_EMAILS`.
 
 ## Chạy tại máy
 
@@ -21,4 +23,4 @@ ChatGPT sign-in do Sites cung cấp; bản portable tại máy chỉ mô phỏng
 
 Hai cách đăng nhập có cùng email đã xác minh dùng chung một tiến độ. Email chưa được Supabase xác minh không được dùng để liên kết tài khoản. Danh tính nhà cung cấp được ghi riêng để tiến độ không đổi khi học viên đổi email về sau.
 
-Đây là bản beta, chưa phải ngân hàng đề JLPT đầy đủ. Cần tiếp tục bổ sung bài học và đề luyện các kỹ năng, kế hoạch học cá nhân và kiểm thử với tài khoản thật trước khi mở rộng công khai.
+Đây là bản beta, chưa phải ngân hàng đề JLPT đầy đủ. Nguồn dữ liệu cộng đồng OpenJLPT có thể hỗ trợ xây từ vựng/kanji/ngữ pháp N5–N1, nhưng cần kiểm tra từng mục, dịch tiếng Việt và tuân thủ CC BY-SA trước khi nhập kho. Cần tiếp tục bổ sung bài học và đề luyện các kỹ năng, kế hoạch học cá nhân, logic mở cấp khi có đủ nội dung, và kiểm thử với tài khoản thật trước khi mở rộng công khai.
