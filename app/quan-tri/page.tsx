@@ -36,6 +36,20 @@ export default function ModerationPage() {
     finally { setBusy(null); }
   }
 
+  async function downloadSource(documentId: string) {
+    const response = await authFetch(`/api/documents/${documentId}/file`);
+    if (!response.ok) {
+      const data = await response.json() as { error?: string };
+      setMessage(data.error || "Không tải được tệp gốc.");
+      return;
+    }
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url; link.download = `tai-lieu-${documentId}`; link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 30_000);
+  }
+
   return <main className="mx-auto max-w-4xl px-5 py-10">
     <a href="/" className="text-sm font-semibold text-[#315b85]">← Trang học</a>
     <p className="eyebrow mt-8">Quản trị nội dung</p><h1 className="mt-2 text-3xl font-bold">Bài học chờ duyệt</h1>
@@ -43,6 +57,7 @@ export default function ModerationPage() {
     <div className="mt-7 space-y-6">{items.map(item => <article key={item.id} className="rounded-2xl border border-border bg-white p-6">
       <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground"><span className="font-bold text-[#315b85]">{item.content.level}</span><span>Phiên bản {item.version}</span><span>{item.authorEmail || "Học viên"}</span></div>
       <h2 className="mt-3 text-xl font-bold">{item.content.title}</h2>
+      <button type="button" onClick={() => downloadSource(item.documentId)} className="mt-2 text-sm font-semibold text-[#315b85] underline">Tải tài liệu gốc để đối chiếu</button>
       <p className="mt-3 whitespace-pre-wrap leading-7">{item.content.summary}</p>
       <div className="mt-4 space-y-3">{item.content.questions.map((question, index) => <div key={index} className="rounded-xl bg-[#f5f7f9] p-4 text-sm leading-6">
         <p className="font-bold">Câu {index + 1}: {question.question}</p>

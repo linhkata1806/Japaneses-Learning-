@@ -21,6 +21,7 @@ export default function DocumentsPage() {
   const [consent, setConsent] = useState(false);
   const [visibility, setVisibility] = useState<Visibility>("PRIVATE");
   const [geminiAvailable, setGeminiAvailable] = useState(false);
+  const [remainingAi, setRemainingAi] = useState<number | null>(null);
   const [busy, setBusy] = useState("");
   const [message, setMessage] = useState("");
   const [sharePath, setSharePath] = useState<string | null>(null);
@@ -40,7 +41,11 @@ export default function DocumentsPage() {
         const cfg = await config.json() as { geminiAvailable?: boolean };
         setLearner(meData.learner?.displayName || null);
         setGeminiAvailable(Boolean(cfg.geminiAvailable));
-        if (meData.learner) await reloadDocuments();
+        if (meData.learner) {
+          await reloadDocuments();
+          const quota = await authFetch("/api/ai-quota");
+          if (quota.ok) setRemainingAi(((await quota.json()) as { remaining: number }).remaining);
+        }
       })
       .catch(() => setMessage("Chưa tải được thông tin tài khoản."))
       .finally(() => setLoading(false));
@@ -78,9 +83,10 @@ export default function DocumentsPage() {
       const response = await authFetch(`/api/documents/${selectedDoc}/generate`, {
         method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ consent: true }),
       });
-      const result = await response.json() as { contentId?: string; content?: GeneratedContent; error?: string };
+      const result = await response.json() as { contentId?: string; content?: GeneratedContent; remainingToday?: number; error?: string };
       if (!response.ok || !result.contentId || !result.content) throw new Error(result.error || "AI chưa tạo được bài học.");
       setDraft({ id: result.contentId, version: 1, status: "DRAFT", reviewStatus: "NOT_SUBMITTED", content: result.content });
+      if (typeof result.remainingToday === "number") setRemainingAi(result.remainingToday);
       setMessage("AI đã tạo bản nháp. Hãy kiểm tra và sửa trước khi dùng hoặc chia sẻ.");
       await reloadDocuments();
     } catch (error) { setMessage(error instanceof Error ? error.message : "AI chưa tạo được bài học."); }
@@ -165,9 +171,10 @@ export default function DocumentsPage() {
                 <h2 className="break-words text-xl font-bold">{current?.filename || "Tài liệu"}</h2>
                 {!draft && <div className="mt-6">
                   <p className="leading-7 text-muted-foreground">AI sẽ đề xuất tóm tắt và câu hỏi có trích dẫn từ tệp. Bạn phải kiểm tra lại trước khi dùng hoặc chia sẻ.</p>
+                  {remainingAi !== null && <p className="mt-2 text-sm font-semibold text-[#315b85]">Còn {remainingAi}/3 lượt AI hôm nay</p>}
                   <label className="mt-5 flex items-start gap-3 text-sm leading-6"><input type="checkbox" checked={consent} onChange={event => setConsent(event.target.checked)} className="mt-1 size-4" />
                     <span>Tôi đồng ý gửi nội dung tệp tới Gemini Free để tạo bài học. Nội dung gửi đi có thể được Google dùng để cải thiện dịch vụ theo điều khoản gói miễn phí; không tải thông tin nhạy cảm lên.</span></label>
-                  <Button type="button" onClick={generate} disabled={!geminiAvailable || !consent || Boolean(busy)} className="mt-5">{busy === "generate" ? "AI đang xử lý…" : "Tạo bài học bằng AI"}</Button>
+                  <Button type="button" onClick={generate} disabled={!geminiAvailable || !consent || remainingAi === 0 || Boolean(busy)} className="mt-5">{busy === "generate" ? "AI đang xử lý…" : "Tạo bài học bằng AI"}</Button>
                   {!geminiAvailable && <p className="mt-3 text-sm text-muted-foreground">Tính năng AI sẽ bật khi khóa Gemini được thêm vào cấu hình bảo mật.</p>}
                 </div>}
                 {draft && <div className="mt-6 space-y-6">
