@@ -29,9 +29,11 @@ export const questionAttempts = sqliteTable("question_attempts", {
   isCorrect: integer("is_correct", { mode: "boolean" }).notNull(),
   mode: text("mode").notNull().default("PRACTICE"),
   answeredAt: text("answered_at").notNull(),
+  localDay: text("local_day").notNull().default(""),
 }, (table) => [
   index("idx_question_attempts_user_date").on(table.userId, table.answeredAt),
   index("idx_question_attempts_user_question").on(table.userId, table.questionId),
+  index("idx_question_attempts_user_local_day").on(table.userId, table.localDay),
 ]);
 
 export const documents = sqliteTable("documents", {

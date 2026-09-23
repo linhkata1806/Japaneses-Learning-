@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BookOpen, ChevronRight, FileText, RotateCcw } from "lucide-react";
+import { BookOpen, ChevronRight, FileText, Library, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { authFetch } from "@/lib/browser-auth";
 
 type Level = "N5" | "N4" | "N3" | "N2" | "N1";
+type Stats = { attempts: number; accuracy: number; xp: number; streak: number; wrongQuestions: string[] };
 const levels: Level[] = ["N5", "N4", "N3", "N2", "N1"];
 const samples: Record<Level, { area: string; title: string; question: string; options: string[]; answer: number; explanation: string; point: string }> = {
   N5: { area: "Từ vựng · Sinh hoạt hằng ngày", title: "Động từ trong câu đơn", question: "毎朝、コーヒーを ______。", options: ["飲みます", "読みます", "見ます", "聞きます"], answer: 0, explanation: "飲みます (のみます) nghĩa là “uống”. Với コーヒーを, đây là động từ phù hợp. Các lựa chọn còn lại lần lượt là đọc, xem và nghe.", point: "飲む · uống" },
@@ -22,6 +23,7 @@ export default function Home() {
   const [submitted, setSubmitted] = useState(false);
   const [account, setAccount] = useState<string | null>(null);
   const [saveMessage, setSaveMessage] = useState("");
+  const [stats, setStats] = useState<Stats | null>(null);
   const sample = samples[level];
   const chooseLevel = (next: Level) => { setLevel(next); setSelected(null); setSubmitted(false); setSaveMessage(""); };
 
@@ -29,6 +31,7 @@ export default function Home() {
     authFetch("/api/me").then(response => response.json()).then(value => {
       const data = value as { learner?: { displayName?: string } | null };
       setAccount(data.learner?.displayName || null);
+      if (data.learner) authFetch("/api/stats").then(response => response.ok ? response.json() : null).then(value => setStats(value as Stats | null)).catch(() => {});
     }).catch(() => setAccount(null));
   }, []);
 
@@ -43,6 +46,10 @@ export default function Home() {
         body: JSON.stringify({ questionId: level, selectedOption: selected }),
       });
       setSaveMessage(response.ok ? "Đã lưu vào lịch sử học." : "Chưa lưu được bài làm, bạn có thể thử lại.");
+      if (response.ok) {
+        const fresh = await authFetch("/api/stats");
+        if (fresh.ok) setStats(await fresh.json() as Stats);
+      }
     } catch {
       setSaveMessage("Chưa lưu được bài làm, bạn có thể thử lại.");
     }
@@ -70,6 +77,7 @@ export default function Home() {
         <nav aria-label="Các bước học" className="rounded-2xl border border-border bg-white p-3">
           <div className="flex items-center gap-3 rounded-xl bg-[#e8eef6] px-4 py-3 font-semibold text-[#244a76]"><BookOpen className="size-5" aria-hidden="true" /> Luyện tập</div>
           <a href="/tai-lieu" className="flex items-center gap-3 rounded-xl px-4 py-3 text-muted-foreground hover:bg-[#f4f7fa]"><FileText className="size-5" aria-hidden="true" /> Tài liệu của tôi</a>
+          <a href="/thu-vien" className="flex items-center gap-3 rounded-xl px-4 py-3 text-muted-foreground hover:bg-[#f4f7fa]"><Library className="size-5" aria-hidden="true" /> Thư viện cộng đồng</a>
         </nav>
         <div className="rounded-2xl bg-[#172f46] p-5 text-white">
           <p className="text-sm font-semibold text-[#b2cadf]">Lộ trình cá nhân</p>
@@ -120,10 +128,21 @@ export default function Home() {
 
       <aside className="space-y-5 lg:pt-16">
         <div className="rounded-2xl border border-border bg-white p-5">
-          <div className="flex items-center justify-between"><h2 className="font-bold">Tiến độ học thử</h2><span className="text-sm font-semibold text-[#315b85]">{submitted ? "1/1" : "0/1"}</span></div>
-          <Progress value={submitted ? 100 : 0} className="mt-4 h-2 bg-[#e5edf4] [&_[data-slot=progress-indicator]]:bg-[#e5593f]" />
-          <p className="mt-3 text-sm leading-6 text-muted-foreground">Trả lời câu hỏi để xem lời giải và kiến thức cần ghi nhớ.</p>
+          <div className="flex items-center justify-between"><h2 className="font-bold">{stats ? "Tiến độ đã lưu" : "Tiến độ học thử"}</h2><span className="text-sm font-semibold text-[#315b85]">{stats ? `${stats.accuracy}%` : submitted ? "1/1" : "0/1"}</span></div>
+          <Progress value={stats ? stats.accuracy : submitted ? 100 : 0} className="mt-4 h-2 bg-[#e5edf4] [&_[data-slot=progress-indicator]]:bg-[#e5593f]" />
+          {stats ? <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+            <div><strong className="block text-lg">{stats.attempts}</strong><span className="text-xs text-muted-foreground">Câu đã làm</span></div>
+            <div><strong className="block text-lg">{stats.xp}</strong><span className="text-xs text-muted-foreground">XP</span></div>
+            <div><strong className="block text-lg">{stats.streak}</strong><span className="text-xs text-muted-foreground">Ngày liên tiếp</span></div>
+          </div> : <p className="mt-3 text-sm leading-6 text-muted-foreground">Trả lời câu hỏi để xem lời giải và kiến thức cần ghi nhớ.</p>}
         </div>
+        {stats && stats.wrongQuestions.length > 0 && <div className="rounded-2xl border border-border bg-white p-5">
+          <h2 className="font-bold">Câu cần ôn</h2>
+          <p className="mt-2 text-sm text-muted-foreground">Làm đúng lại để đưa câu ra khỏi danh sách.</p>
+          <div className="mt-3 flex flex-wrap gap-2">{stats.wrongQuestions.filter((item): item is Level => levels.includes(item as Level)).map(item =>
+            <Button key={item} type="button" variant="outline" size="sm" onClick={() => chooseLevel(item)}>{item} <ChevronRight aria-hidden="true" /></Button>
+          )}</div>
+        </div>}
         <div className="rounded-2xl border border-[#d8e4ef] bg-[#eef5fb] p-5">
           <p className="text-sm font-bold text-[#315b85]">Mẹo học nhanh</p>
           <p className="mt-2 text-[0.94rem] leading-7">Đọc câu tiếng Nhật trước khi nhìn các phương án. Sau khi làm, xem vì sao đáp án đúng và thử đọc lại cả câu.</p>

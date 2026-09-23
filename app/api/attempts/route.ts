@@ -33,10 +33,24 @@ export async function POST(request: Request) {
   const now = new Date().toISOString();
   try {
     await ensureProfile(learner);
+    const profile = await env.DB.prepare("SELECT timezone FROM profiles WHERE id = ?").bind(learner.id).first<{ timezone: string }>();
+    const timezone = profile?.timezone || "Asia/Ho_Chi_Minh";
+    const localDay = new Intl.DateTimeFormat("en-CA", { timeZone: timezone, year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+    const history = await env.DB.prepare(
+      "SELECT COUNT(*) AS attempts, SUM(is_correct) AS correctCount FROM question_attempts WHERE user_id = ? AND question_id = ?"
+    ).bind(learner.id, questionId).first<{ attempts: number; correctCount: number | null }>();
     await env.DB.prepare(
-      "INSERT INTO question_attempts (id, user_id, question_id, question_version, level, selected_option, is_correct, mode, answered_at) VALUES (?, ?, ?, 1, ?, ?, ?, 'PRACTICE', ?)"
-    ).bind(id, learner.id, questionId, questionId, selected, correct ? 1 : 0, now).run();
-    return Response.json({ id, correct, answeredAt: now }, { status: 201 });
+      "INSERT INTO question_attempts (id, user_id, question_id, question_version, level, selected_option, is_correct, mode, answered_at, local_day) VALUES (?, ?, ?, 1, ?, ?, ?, 'PRACTICE', ?, ?)"
+    ).bind(id, learner.id, questionId, questionId, selected, correct ? 1 : 0, now, localDay).run();
+    let xpAwarded = 0;
+    if (correct && !history?.correctCount) {
+      const amount = history?.attempts ? 5 : 10;
+      const result = await env.DB.prepare(
+        "INSERT OR IGNORE INTO xp_transactions (id, user_id, source_type, source_id, amount, created_at) VALUES (?, ?, 'FIRST_CORRECT', ?, ?, ?)"
+      ).bind(crypto.randomUUID(), learner.id, questionId, amount, now).run();
+      if (result.meta.changes > 0) xpAwarded = amount;
+    }
+    return Response.json({ id, correct, answeredAt: now, xpAwarded }, { status: 201 });
   } catch {
     return jsonError("Chưa thể lưu câu trả lời. Vui lòng thử lại.", 503);
   }
