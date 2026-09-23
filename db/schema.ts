@@ -9,6 +9,17 @@ export const profiles = sqliteTable("profiles", {
   createdAt: text("created_at").notNull(),
 }, (table) => [index("idx_profiles_email").on(table.email)]);
 
+export const accountEmails = sqliteTable("account_emails", {
+  email: text("email").primaryKey(),
+  userId: text("user_id").notNull(),
+}, (table) => [index("idx_account_emails_user").on(table.userId)]);
+
+export const accountIdentities = sqliteTable("account_identities", {
+  identityId: text("identity_id").primaryKey(),
+  userId: text("user_id").notNull(),
+  createdAt: text("created_at").notNull(),
+}, (table) => [index("idx_account_identities_user").on(table.userId)]);
+
 export const studyPlans = sqliteTable("study_plans", {
   id: text("id").primaryKey(),
   userId: text("user_id").notNull(),

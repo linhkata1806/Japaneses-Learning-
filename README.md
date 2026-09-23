@@ -19,4 +19,6 @@ Yêu cầu Node.js 22.13 trở lên. Chạy `npm ci`, `npm run dev`. Web mở t�
 
 ChatGPT sign-in do Sites cung cấp; bản portable tại máy chỉ mô phỏng tài khoản để kiểm thử. Đăng nhập email chỉ hiển thị khi cả hai biến Supabase được cấu hình. Nút tạo bài bằng AI chỉ bật khi có `GEMINI_API_KEY`. Mỗi tài khoản được tối đa 3 lượt tạo thành công/ngày theo giờ Việt Nam; tài liệu chỉ được gửi tới Gemini sau khi học viên đồng ý. Khi dùng gói Gemini miễn phí, giao diện thông báo nội dung gửi đi có thể được Google dùng để cải thiện dịch vụ.
 
+Hai cách đăng nhập có cùng email đã xác minh dùng chung một tiến độ. Email chưa được Supabase xác minh không được dùng để liên kết tài khoản. Danh tính nhà cung cấp được ghi riêng để tiến độ không đổi khi học viên đổi email về sau.
+
 Đây là bản beta, chưa phải ngân hàng đề JLPT đầy đủ. Cần tiếp tục bổ sung bài học và đề luyện các kỹ năng, kế hoạch học cá nhân và kiểm thử với tài khoản thật trước khi mở rộng công khai.
