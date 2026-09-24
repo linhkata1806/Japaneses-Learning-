@@ -1,25 +1,12 @@
 import { env } from "cloudflare:workers";
 import { getChatGPTUser } from "@/app/chatgpt-auth";
+import { readGoogleSession } from "@/lib/google-oauth";
 
-export type Learner = { id: string; email: string; displayName: string; provider: "chatgpt" | "email"; avatarUrl?: string | null };
+export type Learner = { id: string; email: string; displayName: string; provider: "chatgpt" | "google"; avatarUrl?: string | null };
 
 export async function getLearner(request: Request): Promise<Learner | null> {
-  const token = request.headers.get("authorization")?.match(/^Bearer (.+)$/i)?.[1];
-  if (token) {
-    if (!env.SUPABASE_URL || !env.SUPABASE_PUBLISHABLE_KEY) return null;
-    try {
-      const response = await fetch(new URL("/auth/v1/user", env.SUPABASE_URL), {
-        headers: { authorization: `Bearer ${token}`, apikey: env.SUPABASE_PUBLISHABLE_KEY },
-      });
-      if (!response.ok) return null;
-      const user = await response.json() as { id?: string; email?: string; email_confirmed_at?: string | null; user_metadata?: { full_name?: string; avatar_url?: string } };
-      if (!user.id || !user.email || !user.email_confirmed_at) return null;
-      const avatar = user.user_metadata?.avatar_url;
-      return linkIdentity({ id: `email:${user.id}`, email: user.email, displayName: user.user_metadata?.full_name || user.email, provider: "email", avatarUrl: avatar && /^https:\/\//i.test(avatar) ? avatar : null });
-    } catch {
-      return null;
-    }
-  }
+  const google = await readGoogleSession(request);
+  if (google) return { ...google, provider: "google" };
 
   const chatgpt = await getChatGPTUser();
   return chatgpt
@@ -27,7 +14,7 @@ export async function getLearner(request: Request): Promise<Learner | null> {
     : null;
 }
 
-async function linkIdentity(identity: Learner): Promise<Learner> {
+export async function linkIdentity(identity: Learner): Promise<Learner> {
   if (!env.DB) return identity;
   const email = identity.email.trim().toLowerCase();
   const linked = await env.DB.prepare("SELECT user_id AS userId FROM account_identities WHERE identity_id = ?")

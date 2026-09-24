@@ -10,19 +10,20 @@ Yêu cầu Node.js 22.13 trở lên. Chạy `npm ci`, `npm run dev`. Web mở t�
 
 ## Cấu hình bản hosted
 
-`.openai/hosting.json` chỉ khai báo D1. Các route và cấu trúc dữ liệu tài liệu vẫn được giữ, nhưng thao tác với tệp trả thông báo tạm dừng cho tới khi có phương án lưu trữ phù hợp. Các giá trị runtime được quản lý trong Sites, không ghi khóa bí mật vào mã nguồn:
+`.openai/hosting.json` chỉ khai báo D1. Các route và cấu trúc dữ liệu tài liệu vẫn được giữ, nhưng thao tác với tệp trả thông báo tạm dừng cho tới khi có phương án lưu trữ phù hợp. Cấu hình biến runtime và secret trong Cloudflare Workers, không ghi khóa bí mật vào mã nguồn:
 
 | Biến | Ý nghĩa |
 | --- | --- |
 | `ADMIN_EMAILS` | Danh sách email được duyệt nội dung, phân cách bằng dấu phẩy. |
-| `SUPABASE_URL` | URL dự án Supabase dùng cho đăng ký/đăng nhập email. |
-| `SUPABASE_PUBLISHABLE_KEY` | Khóa publishable của cùng dự án Supabase. |
+| `GOOGLE_CLIENT_ID` | OAuth client ID của ứng dụng web trong Google Cloud. |
+| `GOOGLE_CLIENT_SECRET` | OAuth client secret, lưu dưới dạng Cloudflare secret; không đưa vào mã phía trình duyệt. |
+| `APP_URL` | URL gốc của ứng dụng; production: `https://japaneses-learning.linhkata06.workers.dev`. Khi chạy local, dùng `http://localhost:5173`. |
 | `GEMINI_API_KEY` | Khóa Gemini, lưu dưới dạng secret. |
 
 Các bản ghi tài liệu trong D1 giữ nguyên `storage_key`. Không có tệp nào được di chuyển hay xóa bởi thay đổi này.
 
-ChatGPT sign-in do Sites cung cấp; bản portable tại máy chỉ mô phỏng tài khoản để kiểm thử. Đăng nhập email chỉ hiển thị khi cả hai biến Supabase cho xác thực được cấu hình. Nút tạo bài từ tệp bằng AI đang tạm tắt cùng chức năng tải tệp. Khi bật lại, mỗi tài khoản được tối đa 3 lượt tạo thành công/ngày theo giờ Việt Nam; tài liệu chỉ được gửi tới Gemini sau khi học viên đồng ý. Khi dùng gói Gemini miễn phí, giao diện thông báo nội dung gửi đi có thể được Google dùng để cải thiện dịch vụ.
+ChatGPT sign-in do Sites cung cấp; bản portable tại máy chỉ mô phỏng tài khoản để kiểm thử. Đăng nhập Google dùng OAuth phía server và cần cả ba biến Google/App URL cùng D1. Trong Google Cloud, tạo OAuth client loại **Web application** và thêm redirect URI chính xác: `https://japaneses-learning.linhkata06.workers.dev/api/auth/google/callback`. Trước khi bật Google login trên production, áp dụng migration `drizzle/0004_previous_lucky_pierre.sql` cho D1; nút Google chỉ bật khi bảng phiên này tồn tại và đủ cấu hình. Khi thử local, thêm `http://localhost:5173/api/auth/google/callback` vào OAuth client và đặt `APP_URL=http://localhost:5173`. Nút tạo bài từ tệp bằng AI đang tạm tắt cùng chức năng tải tệp. Khi bật lại, mỗi tài khoản được tối đa 3 lượt tạo thành công/ngày theo giờ Việt Nam; tài liệu chỉ được gửi tới Gemini sau khi học viên đồng ý. Khi dùng gói Gemini miễn phí, giao diện thông báo nội dung gửi đi có thể được Google dùng để cải thiện dịch vụ.
 
-Hai cách đăng nhập có cùng email đã xác minh dùng chung một tiến độ. Email chưa được Supabase xác minh không được dùng để liên kết tài khoản. Danh tính nhà cung cấp được ghi riêng để tiến độ không đổi khi học viên đổi email về sau.
+Hai cách đăng nhập có cùng email đã xác minh dùng chung một tiến độ. Google được nhận diện bằng mã `sub` ổn định, ghi trong `account_identities`; phiên ứng dụng có token ngẫu nhiên được băm trước khi lưu vào D1. Danh tính nhà cung cấp được ghi riêng để tiến độ không đổi khi học viên đổi email về sau.
 
 Đây là bản beta, chưa phải ngân hàng đề JLPT đầy đủ. Nguồn dữ liệu cộng đồng OpenJLPT có thể hỗ trợ xây từ vựng/kanji/ngữ pháp N5–N1, nhưng cần kiểm tra từng mục, dịch tiếng Việt và tuân thủ CC BY-SA trước khi nhập kho. Cần tiếp tục bổ sung bài học và đề luyện các kỹ năng, kế hoạch học cá nhân, logic mở cấp khi có đủ nội dung, và kiểm thử với tài khoản thật trước khi mở rộng công khai.
