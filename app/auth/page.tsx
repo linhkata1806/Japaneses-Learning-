@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { chatGPTSignInPath, getChatGPTUser } from "@/app/chatgpt-auth";
 import EmailAuthForm from "./email-auth-form";
 
@@ -6,7 +7,7 @@ export const dynamic = "force-dynamic";
 export default async function AuthPage() {
   const chatgpt = await getChatGPTUser();
   return <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-5 py-12">
-    <a href="/" className="mb-8 text-sm font-semibold text-[#315b85]">← Về trang học thử</a>
+    <Link href="/" className="mb-8 text-sm font-semibold text-study-link">← Về trang học thử</Link>
     <div className="rounded-2xl border border-border bg-white p-7 shadow-[0_20px_60px_rgba(27,47,69,0.07)]">
       <p className="eyebrow">Tài khoản học viên</p>
       <h1 className="mt-2 text-2xl font-bold">Lưu tiến độ học của bạn</h1>

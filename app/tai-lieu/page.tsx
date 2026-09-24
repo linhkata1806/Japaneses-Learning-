@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { ManabiBrand } from "@/components/manabi/brand";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { authFetch } from "@/lib/browser-auth";
@@ -144,13 +146,13 @@ export default function DocumentsPage() {
   const current = docs.find(item => item.id === selectedDoc);
   return <div className="min-h-screen bg-background">
     <header className="border-b border-border bg-white"><div className="mx-auto flex max-w-[1200px] items-center justify-between px-5 py-4 md:px-8">
-      <a href="/" className="font-bold text-[#1c456b]">Manabi<span className="text-[#e5593f]">.</span></a>
-      <a href="/" className="text-sm font-semibold text-[#315b85]">← Về luyện tập</a>
+      <ManabiBrand compact />
+      <Link href="/" className="text-sm font-semibold text-study-link">← Về luyện tập</Link>
     </div></header>
     <main className="mx-auto max-w-[1200px] px-5 py-8 md:px-8">
       <p className="eyebrow">Tài liệu của tôi</p><h1 className="mt-2 text-3xl font-bold">Tạo bài học từ tài liệu</h1>
       <p className="mt-3 max-w-3xl leading-7 text-muted-foreground">Tệp của bạn luôn riêng tư khi mới tải lên. Hãy kiểm tra kỹ nội dung AI tạo trước khi chia sẻ cho người khác.</p>
-      {loading ? <p className="mt-8">Đang tải…</p> : !learner ? <div className="mt-8 rounded-2xl border border-border bg-white p-6"><p>Cần đăng nhập để lưu và xử lý tài liệu.</p><a href="/auth" className="mt-3 inline-block font-semibold text-[#315b85]">Đăng nhập</a></div>
+      {loading ? <p className="mt-8">Đang tải…</p> : !learner ? <div className="mt-8 rounded-2xl border border-border bg-white p-6"><p>Cần đăng nhập để lưu và xử lý tài liệu.</p><a href="/auth" className="mt-3 inline-block font-semibold text-study-link">Đăng nhập</a></div>
         : <div className="mt-8 grid gap-7 lg:grid-cols-[330px_minmax(0,1fr)]">
           <aside className="space-y-6">
             <form onSubmit={upload} className="rounded-2xl border border-border bg-white p-5">
@@ -162,7 +164,7 @@ export default function DocumentsPage() {
             <div className="rounded-2xl border border-border bg-white p-5">
               <h2 className="font-bold">Tài liệu đã tải</h2>
               {docs.length === 0 ? <p className="mt-3 text-sm text-muted-foreground">Chưa có tài liệu nào.</p>
-                : <div className="mt-3 space-y-2">{docs.map(item => <Button key={item.id} type="button" variant="outline" onClick={() => openDocument(item.id)} className={`h-auto w-full justify-start whitespace-normal rounded-xl p-3 text-left ${selectedDoc === item.id ? "border-[#315b85] bg-[#eef5fb]" : ""}`}>
+                : <div className="mt-3 space-y-2">{docs.map(item => <Button key={item.id} type="button" variant="outline" onClick={() => openDocument(item.id)} className={`h-auto w-full justify-start whitespace-normal rounded-xl p-3 text-left ${selectedDoc === item.id ? "border-study-link bg-study-tint" : ""}`}>
                   <span className="min-w-0"><span className="block truncate font-semibold">{item.filename}</span><span className="mt-1 block text-xs text-muted-foreground">{item.visibility === "PRIVATE" ? "Riêng tư" : item.visibility === "PUBLIC" ? "Đang xét duyệt / Công khai" : "Qua liên kết"} · {item.status}</span></span>
                 </Button>)}</div>}
             </div>
@@ -173,14 +175,14 @@ export default function DocumentsPage() {
                 <h2 className="break-words text-xl font-bold">{current?.filename || "Tài liệu"}</h2>
                 {!draft && <div className="mt-6">
                   <p className="leading-7 text-muted-foreground">AI sẽ đề xuất tóm tắt và câu hỏi có trích dẫn từ tệp. Bạn phải kiểm tra lại trước khi dùng hoặc chia sẻ.</p>
-                  {remainingAi !== null && <p className="mt-2 text-sm font-semibold text-[#315b85]">Còn {remainingAi}/3 lượt AI hôm nay</p>}
+                  {remainingAi !== null && <p className="mt-2 text-sm font-semibold text-study-link">Còn {remainingAi}/3 lượt AI hôm nay</p>}
                   <label className="mt-5 flex items-start gap-3 text-sm leading-6"><input type="checkbox" checked={consent} onChange={event => setConsent(event.target.checked)} className="mt-1 size-4" />
-                    <span>Tôi đồng ý gửi nội dung tệp tới Gemini Free để tạo bài học. Nội dung gửi đi có thể được Google dùng để cải thiện dịch vụ; không tải thông tin nhạy cảm lên. <a href="https://ai.google.dev/gemini-api/terms" target="_blank" rel="noreferrer" className="font-semibold text-[#315b85] underline">Xem điều khoản</a>.</span></label>
+                    <span>Tôi đồng ý gửi nội dung tệp tới Gemini Free để tạo bài học. Nội dung gửi đi có thể được Google dùng để cải thiện dịch vụ; không tải thông tin nhạy cảm lên. <a href="https://ai.google.dev/gemini-api/terms" target="_blank" rel="noreferrer" className="font-semibold text-study-link underline">Xem điều khoản</a>.</span></label>
                   <Button type="button" onClick={generate} disabled={!geminiAvailable || !consent || remainingAi === 0 || Boolean(busy)} className="mt-5">{busy === "generate" ? "AI đang xử lý…" : "Tạo bài học bằng AI"}</Button>
                   {!geminiAvailable && <p className="mt-3 text-sm text-muted-foreground">Tính năng AI sẽ bật khi khóa Gemini được thêm vào cấu hình bảo mật.</p>}
                 </div>}
                 {draft && <div className="mt-6 space-y-6">
-                  <div className="rounded-xl bg-[#eef5fb] p-4 text-sm">Phiên bản {draft.version} · {draft.status === "DRAFT" ? "Bản nháp cần kiểm tra" : draft.reviewStatus === "PENDING" ? "Đang chờ duyệt công khai" : "Đã xác nhận"}</div>
+                  <div className="rounded-xl bg-study-tint p-4 text-sm">Phiên bản {draft.version} · {draft.status === "DRAFT" ? "Bản nháp cần kiểm tra" : draft.reviewStatus === "PENDING" ? "Đang chờ duyệt công khai" : "Đã xác nhận"}</div>
                   <label className="block text-sm font-semibold">Tên bài học<Input value={draft.content.title} onChange={event => setDraft({ ...draft, content: { ...draft.content, title: event.target.value } })} className="mt-2 h-11" /></label>
                   <label className="block text-sm font-semibold">Tóm tắt tiếng Việt<Textarea value={draft.content.summary} onChange={event => setDraft({ ...draft, content: { ...draft.content, summary: event.target.value } })} className="mt-2 min-h-36 leading-7" /></label>
                   {draft.content.questions.map((item, index) => <div key={index} className="rounded-xl border border-border p-4">
@@ -197,10 +199,10 @@ export default function DocumentsPage() {
                     <div className="flex flex-wrap gap-2">{([["PRIVATE", "Riêng tư"], ["LINK_ONLY", "Qua liên kết"], ["PUBLIC", "Công khai (chờ duyệt)"]] as const).map(([value, label]) => <Button key={value} type="button" variant={visibility === value ? "default" : "outline"} aria-pressed={visibility === value} onClick={() => setVisibility(value)}>{label}</Button>)}</div>
                     <div className="mt-5 flex flex-wrap gap-3"><Button type="button" variant="outline" onClick={save} disabled={Boolean(busy)}>{busy === "save" ? "Đang lưu…" : "Lưu bản nháp"}</Button><Button type="button" onClick={confirm} disabled={Boolean(busy)}>{busy === "confirm" ? "Đang xác nhận…" : "Xác nhận bài học"}</Button></div>
                   </div>
-                  {sharePath && <p className="break-all rounded-xl bg-[#eef5fb] p-4 text-sm">Liên kết chia sẻ: <a className="font-semibold text-[#315b85] underline" href={sharePath}>{window.location.origin}{sharePath}</a></p>}
+                  {sharePath && <p className="break-all rounded-xl bg-study-tint p-4 text-sm">Liên kết chia sẻ: <a className="font-semibold text-study-link underline" href={sharePath}>{window.location.origin}{sharePath}</a></p>}
                 </div>}
               </>}
-            {message && <p role="status" className="mt-6 rounded-xl bg-[#eef5fb] p-4 text-sm leading-6">{message}</p>}
+            {message && <p role="status" className="mt-6 rounded-xl bg-study-tint p-4 text-sm leading-6">{message}</p>}
           </section>
         </div>}
     </main>

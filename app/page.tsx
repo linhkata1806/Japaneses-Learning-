@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ChevronRight, FileText, Library, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ManabiBrand } from "@/components/manabi/brand";
 import { Progress } from "@/components/ui/progress";
 import { authFetch } from "@/lib/browser-auth";
 
@@ -110,12 +111,9 @@ export default function Home() {
   return <div className="min-h-screen bg-background text-foreground">
     <header className="border-b border-border bg-white">
       <div className="mx-auto flex max-w-[1420px] items-center justify-between gap-4 px-5 py-4 md:px-10">
-        <Link href="/" className="flex items-center gap-3 text-[1.05rem] font-bold tracking-tight">
-          <span className="grid size-10 place-items-center rounded-xl bg-primary text-lg font-bold text-primary-foreground">日</span>
-          <span>Manabi<span className="text-[#e5593f]">.</span></span>
-        </Link>
+        <ManabiBrand />
         {account ? <span className="max-w-[45vw] truncate rounded-full border border-border px-3 py-1 text-sm font-medium text-muted-foreground">{account}</span>
-          : <Link href="/auth" className="rounded-full border border-border px-3 py-1 text-sm font-medium text-[#1c456b] hover:bg-[#eef5fb]">Đăng nhập để lưu tiến độ</Link>}
+          : <Link href="/auth" className="rounded-full border border-border px-3 py-1 text-sm font-medium text-[#1c456b] hover:bg-study-tint">Đăng nhập để lưu tiến độ</Link>}
       </div>
     </header>
 
@@ -136,7 +134,7 @@ export default function Home() {
           <div className="px-6 pb-7 pt-7 md:px-8 md:pb-8">
             <p className="text-sm font-semibold text-muted-foreground">Chọn đáp án đúng</p>
             <p lang="ja" className="mt-4 rounded-xl border border-[#dce5ed] bg-[#f8fafc] px-5 py-6 text-[1.5rem] font-medium leading-[1.9] tracking-[0.015em] md:text-[1.65rem]">{sample.question}</p>
-            <p className="mt-3 max-w-[70ch] text-sm leading-6 text-muted-foreground">Nguồn câu hỏi: nhóm phát triển tự biên soạn cho bản thử; không trích từ đề JLPT hay tài liệu công khai. <a className="font-medium text-[#315b85] underline" href="/nguon-hoc-lieu">Xem nguồn học liệu</a>.</p>
+            <p className="mt-3 max-w-[70ch] text-sm leading-6 text-muted-foreground">Nguồn câu hỏi: nhóm phát triển tự biên soạn cho bản thử; không trích từ đề JLPT hay tài liệu công khai. <a className="font-medium text-study-link underline" href="/nguon-hoc-lieu">Xem nguồn học liệu</a>.</p>
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
               {sample.options.map((option, index) => {
                 const chosen = selected === index;
@@ -170,7 +168,7 @@ export default function Home() {
               <p className="text-sm leading-6 text-muted-foreground">Ví dụ từ Tatoeba để xem cách dùng từ; đây không phải câu hỏi thi đã biên tập.</p>
               {examples.length > 0 ? <ul className="mt-3 space-y-3">{examples.map(example => <li key={example.url} className="rounded-xl bg-[#f6f8fb] p-4">
                 <p lang="ja" className="text-lg font-medium">{example.text}</p>
-                <span className="mt-2 block text-xs text-muted-foreground"><a href={example.url} target="_blank" rel="noreferrer" className="text-[#315b85] underline">Tatoeba · {example.author}</a> · <a href={example.license === "CC0 1.0" ? "https://creativecommons.org/publicdomain/zero/1.0/" : "https://creativecommons.org/licenses/by/2.0/fr/"} target="_blank" rel="noreferrer" className="text-[#315b85] underline">{example.license}</a></span>
+                <span className="mt-2 block text-xs text-muted-foreground"><a href={example.url} target="_blank" rel="noreferrer" className="text-study-link underline">Tatoeba · {example.author}</a> · <a href={example.license === "CC0 1.0" ? "https://creativecommons.org/publicdomain/zero/1.0/" : "https://creativecommons.org/licenses/by/2.0/fr/"} target="_blank" rel="noreferrer" className="text-study-link underline">{example.license}</a></span>
               </li>)}</ul> : <p className="mt-3 text-sm text-muted-foreground">{examplesUnavailable ? "Tatoeba tạm thời không khả dụng; bài luyện vẫn dùng được." : "Đang tải ví dụ…"}</p>}
               </div>
             </details>
@@ -181,9 +179,9 @@ export default function Home() {
       <section aria-label="Tiến độ học" className="mt-8 border-t border-border pt-6">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <h2 className="text-lg font-semibold leading-snug tracking-[-0.01em]">{stats ? "Độ chính xác câu mẫu" : "Tiến độ câu mẫu"}</h2>
-          <span className="text-sm font-semibold tabular-nums text-[#315b85]">{stats ? `${stats.accuracy}%` : submitted ? "1/1 mẫu" : "0/1 mẫu"}</span>
+          <span className="text-sm font-semibold tabular-nums text-study-link">{stats ? `${stats.accuracy}%` : submitted ? "1/1 mẫu" : "0/1 mẫu"}</span>
         </div>
-        <Progress value={stats ? stats.accuracy : submitted ? 100 : 0} className="mt-3 h-2 bg-[#e5edf4] [&_[data-slot=progress-indicator]]:bg-[#e5593f]" />
+        <Progress value={stats ? stats.accuracy : submitted ? 100 : 0} className="mt-3 h-2 bg-[#e5edf4] [&_[data-slot=progress-indicator]]:bg-notebook-coral" />
         {stats && <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm">
           <p>{stats.attempts} câu đã làm</p><p>{stats.xp} XP</p><p>{stats.streak} ngày liên tiếp</p>
         </div>}

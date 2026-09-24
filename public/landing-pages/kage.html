@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Kage — Where stillness reveals the unseen</title>
-<meta name="description" content="A five-chapter night walk through a Kyoto mountain temple. Charred cypress, lantern light and a vermilion moon, rendered live in WebGL.">
+<title>Manabi — Học JLPT từng bước</title>
+<meta name="description" content="Luyện tập JLPT có giải thích tiếng Việt, theo dõi tiến độ và tạo bản nháp bài học từ tài liệu của bạn. Bản beta hiện có một câu mẫu N5.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2305070a'/%3E%3Ccircle cx='16' cy='17' r='8' fill='%23e0231c'/%3E%3Crect x='4' y='8' width='24' height='2.6' fill='%23dfe7e0'/%3E%3Crect x='7' y='13' width='18' height='2' fill='%23dfe7e0'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="secret-pathways-assets/fonts.css">
 <style>
@@ -168,6 +168,7 @@ h1,h2,h3{ font-weight:400; margin:0; letter-spacing:-.005em; }
 .hero-top{ padding-top:calc(var(--nav-h) + clamp(12px,2.6vh,34px)); max-width:min(560px,46vw); position:relative; z-index:2; }
 .hero-top .eyebrow{ display:flex; align-items:center; gap:10px; margin-bottom:20px; }
 .hero-top .eyebrow .dot{ width:5px; height:5px; border-radius:50%; background:var(--vermilion); box-shadow:0 0 10px var(--vermilion); }
+.hero-top .hero-action{ margin-top:20px; }
 .hero h1{ margin-bottom:18px; }
 .hero-sub{ max-width:322px; text-shadow:0 1px 26px rgba(3,6,8,.95); }
 .hero-spacer{ flex:1 1 auto; min-height:clamp(140px,26vh,300px); }
@@ -201,10 +202,10 @@ h1,h2,h3{ font-weight:400; margin:0; letter-spacing:-.005em; }
   transition:transform .8s var(--ease-out);
 }
 .peek-fr{ display:block; aspect-ratio:16/10;
-  background:linear-gradient(180deg, rgba(3,6,9,.04) 24%, rgba(3,6,9,.48) 100%),
-    url('secret-pathways-assets/generated/kage-sanmon-preview.webp') center / cover no-repeat;
-  outline:1px solid rgba(223,231,224,.16); outline-offset:-1px;
-  box-shadow:0 34px 70px -30px rgba(0,0,0,.9); transition:outline-color .5s; }
+  background:linear-gradient(180deg, rgba(3,6,9,.10) 18%, rgba(3,6,9,.58) 100%),
+    url('secret-pathways-assets/generated/kage-sanmon-preview.webp') center 44% / cover no-repeat;
+  outline:1px solid rgba(223,231,224,.12); outline-offset:-1px;
+  box-shadow:0 24px 58px -34px rgba(0,0,0,.82); transition:outline-color .5s; }
 .peek:hover{ transform:translate3d(0,-5px,0); }
 .peek:hover .peek-fr{ outline-color:rgba(223,231,224,.42); }
 .peek-play{ position:absolute; top:0; right:0; left:0; bottom:auto; aspect-ratio:16/10;
@@ -278,27 +279,33 @@ h1,h2,h3{ font-weight:400; margin:0; letter-spacing:-.005em; }
    window onto a different corner of the sanctuary */
 .card-fr{
   position:relative; aspect-ratio:4/5; background:transparent;
-  outline:1px solid var(--line-soft); outline-offset:-1px;
+  outline:1px solid rgba(223,231,224,.12); outline-offset:-1px;
+  box-shadow:inset 0 0 54px rgba(4,7,9,.20);
   transition:outline-color .5s var(--ease);
 }
 .card:hover .card-fr{ outline-color:rgba(223,231,224,.30); }
 .card:nth-child(1) .card-fr{
+  --plate-y:47%;
   background:
     linear-gradient(180deg,rgba(3,6,9,.04) 36%,rgba(3,6,9,.72) 100%),
-    url('secret-pathways-assets/generated/kage-approach.webp') center / cover no-repeat;
+    url('secret-pathways-assets/generated/kage-approach.webp') center 47% / cover no-repeat;
 }
 .card:nth-child(2) .card-fr{
+  --plate-y:51%;
   background:
     linear-gradient(180deg,rgba(3,6,9,.06) 36%,rgba(3,6,9,.74) 100%),
-    url('secret-pathways-assets/generated/kage-lantern-court.webp') center / cover no-repeat;
+    url('secret-pathways-assets/generated/kage-lantern-court.webp') center 51% / cover no-repeat;
 }
 .card:nth-child(3) .card-fr{
+  --plate-y:56%;
   background:
     linear-gradient(180deg,rgba(3,6,9,.05) 36%,rgba(3,6,9,.74) 100%),
-    url('secret-pathways-assets/generated/kage-moonwater.webp') center / cover no-repeat;
+    url('secret-pathways-assets/generated/kage-moonwater.webp') center 56% / cover no-repeat;
 }
 .card-fr::after{ content:''; position:absolute; inset:0;
-  background:linear-gradient(transparent 46%, rgba(4,6,9,.80)); pointer-events:none; }
+  background:linear-gradient(180deg,rgba(6,8,10,.04),transparent 28%,rgba(4,6,9,.18) 66%,rgba(4,6,9,.76)),
+    radial-gradient(ellipse at 50% 42%,transparent 40%,rgba(3,6,8,.22) 100%);
+  pointer-events:none; }
 /* The fabric overdraws its card by CL_BLEED on every side so the billow and
    the contact shadow have somewhere to go, so the frame cannot clip it. The
    card's outline is not here at all: it is drawn in the cloth shader, where it
@@ -364,9 +371,9 @@ h1,h2,h3{ font-weight:400; margin:0; letter-spacing:-.005em; }
   background-attachment:fixed; }
 .no-webgl .peek-fr{ background:linear-gradient(160deg,#162326,#0b1013 55%,#241010); }
 .no-webgl .word-fb{
-  display:block; position:absolute; left:0; right:0; bottom:16%; z-index:1;
-  font-family:'Wordmark','Onest',sans-serif; font-weight:600; font-size:21.4vw; line-height:.78;
-  letter-spacing:.052em; text-align:center; pointer-events:none;
+  display:block; position:absolute; left:0; right:0; bottom:28%; z-index:1;
+  font-family:'Wordmark','Onest',sans-serif; font-weight:600; font-size:clamp(38px,8.4vw,118px); line-height:1;
+  letter-spacing:.13em; text-align:center; white-space:nowrap; opacity:.62; pointer-events:none;
   background:linear-gradient(#e2ece5, #97a89c); -webkit-background-clip:text; background-clip:text;
   color:transparent;
 }
@@ -692,7 +699,7 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
 .fg-el > img{
   width:100%; height:auto;   /* the width/height attrs hold the box before the lazy image lands */
   opacity:1;
-  filter:saturate(.88) brightness(.86);
+  filter:saturate(.76) brightness(.76) contrast(1.035) drop-shadow(0 12px 26px rgba(0,0,0,.20));
 }
 .fg-el--flip > img{ transform:scaleX(-1); }
 /* each piece waits off the edge it is anchored to until its chapter is called */
@@ -749,13 +756,18 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
 
 /* — II · still gardens: sakura and maple sweep in from the two lower corners
      and carry their whole length, a lit lantern and a low bush hold the edges */
-[data-fg="pathways"] .fg-sakura { left:-6%;  bottom:-86px;  width:clamp(430px,50vw,880px); }
-[data-fg="pathways"] .fg-leaves { right:-6%; bottom:-62px;  width:clamp(330px,38vw,670px); }
-[data-fg="pathways"] .fg-lantern{ left:-1%;  bottom:-96px;  width:clamp(120px,13vw,215px); }
+[data-fg="pathways"] .fg-sakura { left:-4%;  bottom:-86px;  width:clamp(430px,50vw,880px); }
+[data-fg="pathways"] .fg-leaves { right:-4%; bottom:-62px;  width:clamp(330px,38vw,670px); }
+[data-fg="pathways"] .fg-lantern{ left:2%;   bottom:-68px;  width:clamp(100px,11vw,178px); }
 [data-fg="pathways"] .fg-bush   { right:-4%; bottom:-38px;  width:clamp(250px,30vw,530px); }
 /* the lantern is the one lit object in the library — it keeps its ember */
-[data-fg="pathways"] .fg-lantern > img{ filter:saturate(.96) brightness(1); }
+[data-fg="pathways"] .fg-lantern > img{ filter:saturate(.88) brightness(.88) drop-shadow(0 0 20px rgba(224,106,56,.12)); }
 [data-fg="pathways"] .fg-leaves > img{ transform-origin:100% 40%; }
+[data-fg="pathways"] .fg-sakura > img,
+[data-fg="pathways"] .fg-leaves > img{
+  -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 11%,#000 89%,transparent 100%);
+  mask-image:linear-gradient(90deg,transparent 0%,#000 11%,#000 89%,transparent 100%);
+}
 
 /* — III · sacred craft: basalt and a low wall fragment bracket the atlas and
      a stand of grass ties them together, all three below the plate grid */
@@ -793,7 +805,7 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
   [data-fg="eternity"] .fg-sakura, [data-fg="foot"] .fg-stones{ display:none; }
   [data-fg="gate"] .fg-wall     { left:-14%; bottom:-22px; width:min(82vw,440px); }
   [data-fg="gate"] .fg-grass    { left:auto; right:-10%; bottom:-76px; width:min(94vw,530px); }
-  [data-fg="pathways"] .fg-lantern{ left:-4%;   bottom:-58px; width:clamp(80px,20vw,128px); }
+  [data-fg="pathways"] .fg-lantern{ left:3%;    bottom:-42px; width:clamp(74px,18vw,116px); }
   [data-fg="pathways"] .fg-bush   { right:-10%; bottom:-38px; width:min(72vw,400px); }
   [data-fg="lessons"] .fg-stones  { left:-8%; bottom:-34px; width:min(66vw,360px); }
   [data-fg="lessons"] .fg-grass   { left:auto; right:-8%; bottom:-44px; width:min(70vw,380px); }
@@ -900,10 +912,10 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
         <path d="M6 12h32M9.5 17h25M22 8v28" stroke="#dfe7e0" stroke-width="1.2"/>
       </svg>
     </div>
-    <div class="pre-jp jp">影の道</div>
+    <div class="pre-jp jp">日本語を学ぶ</div>
     <div class="pre-bar"><i id="pre-fill"></i></div>
     <div class="pre-meta">
-      <span>Raising the mountain temple</span><b><span id="pre-pct">0</span>%</b>
+      <span>Đang mở không gian học</span><b><span id="pre-pct">0</span>%</b>
     </div>
   </div>
 </div>
@@ -916,15 +928,15 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
       <path d="M5 13h34M9 18.4h26M22 8.5v27" stroke="#dfe7e0" stroke-width="1.5"/>
       <path d="M14 35.5h16" stroke="#dfe7e0" stroke-width="1.2" stroke-opacity=".6"/>
     </svg>
-    <span class="brand-tx"><b>KAGE</b><i>HIDDEN REALMS OF KYOTO</i></span>
+    <span class="brand-tx"><b>MANABI</b><i>HỌC TIẾNG NHẬT · JLPT</i></span>
   </a>
-  <nav class="nav-links" id="navlinks">
-    <a class="nav-link" href="#gate" data-cursor><span>Temples</span><span class="alt">伽藍</span></a>
-    <a class="nav-link" href="#pathways" data-cursor><span>Gardens</span><span class="alt">庭園</span></a>
-    <a class="nav-link" href="#lessons" data-cursor><span>Rituals</span><span class="alt">神事</span></a>
-    <a class="nav-link" href="#eternity" data-cursor><span>Afterlight</span><span class="alt">残光</span></a>
+  <nav class="nav-links" id="navlinks" aria-label="Điều hướng nội dung">
+    <a class="nav-link" href="#lessons" data-cursor><span>Lộ trình</span><span class="alt">学習</span></a>
+    <a class="nav-link" href="#pathways" data-cursor><span>Luyện tập</span><span class="alt">練習</span></a>
+    <a class="nav-link" href="/tai-lieu" target="_top" data-cursor><span>Tài liệu</span><span class="alt">教材</span></a>
+    <a class="nav-link" href="/thu-vien" target="_top" data-cursor><span>Thư viện</span><span class="alt">図書館</span></a>
   </nav>
-  <button class="nav-burger" aria-label="Menu" data-cursor><i></i><i></i></button>
+  <button class="nav-burger" aria-label="Mở điều hướng" data-cursor><i></i><i></i></button>
 </header>
 
 <div class="page" id="top">
@@ -932,44 +944,47 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
 <!-- ============================================================ hero -->
 <section class="hero" id="hero" data-cam="0">
   <div class="hero-top">
-    <div class="eyebrow" data-rv="fade"><span class="dot"></span> Chapter 00 — The Hidden Gate</div>
+    <div class="eyebrow" data-rv="fade"><span class="dot"></span> Manabi — JLPT N5 đến N1</div>
     <h1 class="display h-hero">
-      <span class="mask-line"><span>Where stillness</span></span>
-      <span class="mask-line"><span>reveals the</span></span>
-      <span class="mask-line"><span>unseen.</span></span>
+       <span class="mask-line"><span>Từng câu một.</span></span>
+       <span class="mask-line"><span>Từ N5 đến</span></span>
+       <span class="mask-line"><span>N1.</span></span>
     </h1>
-    <p class="hero-sub body" data-rv="up">Enter Kyoto through its quiet thresholds, where ritual,
-      craft, and memory shape the path.</p>
+    <p class="hero-sub body" data-rv="up">Luyện câu hỏi, hiểu lời giải bằng tiếng Việt và theo dõi tiến độ. Bản beta hiện bắt đầu với một câu mẫu N5.</p>
+    <a class="arrowlink hero-action" href="/" target="_top" data-rv="fade" data-cursor>
+      <span>Thử câu mẫu N5</span>
+      <span class="ar"><svg viewBox="0 0 14 14" fill="none"><path d="M3 11 11 3M5 3h6v6" stroke="#dfe7e0" stroke-width="1.3"/></svg></span>
+    </a>
   </div>
 
   <div class="hero-spacer"></div>
 
   <div class="hero-foot">
-    <div class="hero-cue" data-rv="fade"><span>Scroll to enter</span><span class="track"><i></i></span></div>
+    <div class="hero-cue" data-rv="fade"><span>Cuộn để khám phá</span><span class="track"><i></i></span></div>
     <div class="chapters" id="chips">
       <div class="chip" data-chip="0" data-rv="up" data-cursor><span class="num">01</span>
-        <span class="tx"><b>Thresholds</b><p>Discover the hidden gates that open on to deeper paths.</p></span></div>
+        <span class="tx"><b>Lộ trình N5–N1</b><p>Tiến từng cấp; nội dung cao hơn chưa mở trong beta.</p></span></div>
       <div class="chip" data-chip="1" data-rv="up" data-cursor><span class="num">02</span>
-        <span class="tx"><b>Still Gardens</b><p>Witness the courts where silence gently unfolds.</p></span></div>
+        <span class="tx"><b>Luyện tập</b><p>Thử câu mẫu N5 và đọc giải thích tiếng Việt.</p></span></div>
       <div class="chip" data-chip="2" data-rv="up" data-cursor><span class="num">03</span>
-        <span class="tx"><b>Sacred Craft</b><p>Embrace the hands and heritage that shape devotion.</p></span></div>
+        <span class="tx"><b>Ôn câu sai</b><p>Lưu lịch sử và xem lại khi bạn đăng nhập.</p></span></div>
       <div class="chip" data-chip="3" data-rv="up" data-cursor><span class="num">04</span>
-        <span class="tx"><b>Night Rituals</b><p>Explore the rites that awaken when the day is done.</p></span></div>
+        <span class="tx"><b>Tài liệu cá nhân</b><p>Tạo bản nháp bài học để tự xem lại.</p></span></div>
     </div>
   </div>
 
-  <a class="peek" href="#pathways" data-view="3" data-rv="fade" data-cursor aria-label="Preview: Sanmon, before the bell">
+  <a class="peek" href="/" target="_top" data-view="3" data-rv="fade" data-cursor aria-label="Mở câu luyện tập mẫu N5">
     <!-- data-frame, or the live view is blitted over the whole anchor and
          runs on down behind the caption instead of stopping at the frame -->
     <span class="peek-fr" data-frame></span>
     <span class="peek-play"><svg viewBox="0 0 22 22" fill="none"><path d="M8 5.6 16.4 11 8 16.4z" fill="#dfe7e0"/></svg></span>
-    <span class="peek-cap"><b class="jp">山門</b><i>Sanmon — before the bell</i></span>
+    <span class="peek-cap"><b class="jp">練習</b><i>Câu mẫu N5 — Thử luyện tập</i></span>
   </a>
 
-  <div class="word-fb" aria-hidden="true">KAGE</div>
+  <div class="word-fb" aria-hidden="true">LINH KATA</div>
 
   <div class="hero-side" data-rv="up">
-    <span class="v jp">影の道</span>
+    <span class="v jp">日本語学習</span>
   </div>
 </section>
 
@@ -988,30 +1003,26 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
     </span>
   </div>
   <div class="sec-head" data-rv="fade">
-    <span class="k"><b>01</b> — The Sanmon</span><span class="rule"></span><span class="k jp">山門</span>
+    <span class="k"><b>01</b> — Lộ trình JLPT</span><span class="rule"></span><span class="k jp">学習計画</span>
   </div>
   <div class="gate-grid">
-    <h2 class="display h-sec" data-rv="up">Charred cypress, worn stone, one gate left open.</h2>
+    <h2 class="display h-sec" data-rv="up">Mỗi cấp độ, một bước tiến có căn cứ.</h2>
     <div class="gate-copy">
-      <p class="lead" data-rv="up">Kage begins where the city stops: a mountain gate of cedar burned black,
-        standing in its own weather. The soot is not decoration. It is how a board is taught to survive a
-        hundred rainy seasons, and the first thing this place asks you to understand.</p>
-      <p class="body" data-rv="up">Climb the worn steps and the worship hall lifts out of the mist, its paper
-        screens lit from inside like a lantern the size of a house. Above the eaves a vermilion moon holds
-        its place, patient, half hidden. Nothing here is in a hurry. Neither, for the next ninety minutes,
-        are you.</p>
-      <a class="arrowlink" href="#pathways" data-rv="fade" data-cursor>
-        <span>Cross the threshold</span>
+      <p class="lead" data-rv="up">Đích học tập là đi từ N5 đến N1 qua lộ trình tuần tự. Hiện bản beta chỉ có một câu mẫu N5 do nhóm phát triển tự biên soạn; đây không phải câu hỏi JLPT chính thức.</p>
+      <p class="body" data-rv="up">N4–N1, giáo trình tuần tự và bài thi thử cuối cấp chưa có. Lộ trình dự kiến mở cấp sau khi hoàn thành nội dung bắt buộc và đạt ngưỡng điểm ước tính theo từng phần; kết quả không phải điểm JLPT chính thức. Bạn có thể tải PDF, DOCX hoặc TXT (tối đa 2 MB); tệp bắt đầu riêng tư. Khi Gemini được cấu hình, AI tạo bản nháp tóm tắt, câu hỏi, giải thích và nguồn để bạn kiểm tra, chỉnh sửa rồi xác nhận. Cần đồng ý trước khi gửi tệp. Sau đó bạn chọn giữ riêng tư, chia sẻ liên kết hoặc gửi xét duyệt công khai; quản trị viên duyệt mọi bài công khai.</p>
+      <a class="arrowlink" href="/tai-lieu" target="_top" data-rv="fade" data-cursor>
+        <span>Tạo bản nháp</span>
         <span class="ar"><svg viewBox="0 0 14 14" fill="none"><path d="M3 11 11 3M5 3h6v6" stroke="#dfe7e0" stroke-width="1.3"/></svg></span>
       </a>
     </div>
   </div>
   <div class="gate-stats" data-rv="up">
-    <div><b>05</b><span>Chapters</span></div>
-    <div><b>92</b><span>Minutes</span></div>
-    <div><b>1611</b><span>Hall raised</span></div>
-    <div><b>∞</b><span>Stillness</span></div>
+    <div><b>N5→N1</b><span>Lộ trình dự kiến</span></div>
+    <div><b>01</b><span>Câu mẫu hiện có</span></div>
+    <div><b>2 MB</b><span>Giới hạn mỗi tệp</span></div>
+    <div><b>3/ngày</b><span>Lượt tạo AI tối đa*</span></div>
   </div>
+  <p class="body" data-rv="fade" style="margin-top:18px">* Tối đa ba lần tạo thành công mỗi tài khoản mỗi ngày, khi Gemini được cấu hình.</p>
 </section>
 
 <!-- ============================================================ chapter II -->
@@ -1032,32 +1043,32 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
     </span>
   </div>
   <div class="sec-head" data-rv="fade">
-    <span class="k"><b>02</b> — Still Gardens</span><span class="rule"></span><span class="k jp">庭園</span>
+    <span class="k"><b>02</b> — Học và xem lại</span><span class="rule"></span><span class="k jp">復習</span>
   </div>
   <div class="cards" id="cards">
     <article class="card" data-rv="up" data-view="0" data-cursor>
       <div class="card-fr" data-frame>
                 <span class="card-ar"><svg viewBox="0 0 14 14" fill="none"><path d="M3 11 11 3M5 3h6v6" stroke="#dfe7e0" stroke-width="1.3"/></svg></span>
         <i class="glow" style="--gx:80.2%; --gy:23.9%; --gr:22%; --gt:6.1s; --gt2:9.7s; --gc1:rgba(255,142,108,.50); --gc2:rgba(212,56,38,.24)"></i>
-        <div class="card-lab"><b>Approach</b><span class="jp">参道</span></div>
+          <div class="card-lab"><b>Câu mẫu N5</b><span class="jp">練習</span></div>
       </div>
-      <div class="card-meta"><span>The long climb</span><span>01 / 03</span></div>
+      <div class="card-meta"><span>Bắt đầu luyện tập</span><span>01 / 03</span></div>
     </article>
     <article class="card" data-rv="up" data-view="1" data-cursor>
       <div class="card-fr" data-frame>
                 <span class="card-ar"><svg viewBox="0 0 14 14" fill="none"><path d="M3 11 11 3M5 3h6v6" stroke="#dfe7e0" stroke-width="1.3"/></svg></span>
         <i class="glow glow--flame" style="--gx:70.5%; --gy:47.2%; --gr:14%; --gt:3.7s; --gt2:5.3s; --gc1:rgba(255,198,124,.62); --gc2:rgba(226,118,40,.30)"></i>
-        <div class="card-lab"><b>Lanterns</b><span class="jp">灯籠</span></div>
+          <div class="card-lab"><b>Giải thích</b><span class="jp">解説</span></div>
       </div>
-      <div class="card-meta"><span>Lantern court</span><span>02 / 03</span></div>
+      <div class="card-meta"><span>Hiểu vì sao đúng hoặc sai</span><span>02 / 03</span></div>
     </article>
     <article class="card" data-rv="up" data-view="2" data-cursor>
       <div class="card-fr" data-frame>
                 <span class="card-ar"><svg viewBox="0 0 14 14" fill="none"><path d="M3 11 11 3M5 3h6v6" stroke="#dfe7e0" stroke-width="1.3"/></svg></span>
         <i class="glow" style="--gx:48.0%; --gy:16.8%; --gr:20%; --gt:7.3s; --gt2:11.2s; --gc1:rgba(255,138,104,.52); --gc2:rgba(208,54,36,.24)"></i>
-        <div class="card-lab"><b>Moonwater</b><span class="jp">月影</span></div>
+          <div class="card-lab"><b>Ôn câu sai</b><span class="jp">復習</span></div>
       </div>
-      <div class="card-meta"><span>The wet court</span><span>03 / 03</span></div>
+      <div class="card-meta"><span>Lưu lịch sử khi đăng nhập</span><span>03 / 03</span></div>
     </article>
   </div>
 </section>
@@ -1077,43 +1088,42 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
     </span>
   </div>
   <div class="sec-head" data-rv="fade">
-    <span class="k"><b>03</b> — Sacred Craft</span><span class="rule"></span><span class="k jp">手業</span>
+    <span class="k"><b>03</b> — Lộ trình và tài liệu</span><span class="rule"></span><span class="k jp">学習</span>
   </div>
   <div class="cur-head">
-    <h2 class="display h-sec" data-rv="up">Five chapters. Ninety minutes. One quiet mind.</h2>
-    <p class="body-lg" data-rv="up">Each chapter is a walk, not a lecture. You arrive at the gate, climb the
-      steps, sit with the lantern, and leave with one thing worth keeping.</p>
+      <h2 class="display h-sec" data-rv="up">Năm cấp JLPT. Một lộ trình đang được xây dựng.</h2>
+      <p class="body-lg" data-rv="up">Bản beta hiện chỉ mở một câu mẫu N5. N4–N1, giáo trình tuần tự và đề thi thử cuối cấp chưa khả dụng; các nhãn cấp độ trên bài học do AI tạo không mở khóa lộ trình.</p>
   </div>
   <div class="cur" id="cur">
     <div class="les" data-les="0" data-cursor>
       <span class="k">01</span>
-      <h3>The Hidden Gate<em class="jp">山門</em></h3>
-      <p>Why a gate is a sentence, and what you agree to when you walk under one.</p>
-      <span class="t">14 min</span><i class="bar"></i>
+      <h3>N5<em class="jp">基礎</em></h3>
+      <p>Một câu mẫu tự biên soạn, kèm giải thích tiếng Việt.</p>
+      <span class="t">Đang mở · 1 câu</span><i class="bar"></i>
     </div>
     <div class="les" data-les="1" data-cursor>
       <span class="k">02</span>
-      <h3>Borrowed Scenery<em class="jp">借景</em></h3>
-      <p>Shakkei: composing with a mountain you will never own.</p>
-      <span class="t">18 min</span><i class="bar"></i>
+      <h3>N4<em class="jp">次の段階</em></h3>
+      <p>Chưa mở trong bản beta.</p>
+      <span class="t">Chưa mở</span><i class="bar"></i>
     </div>
     <div class="les" data-les="2" data-cursor>
       <span class="k">03</span>
-      <h3>Charred Cypress<em class="jp">焼杉</em></h3>
-      <p>Yakisugi: burning a board black so the weather will let it live.</p>
-      <span class="t">21 min</span><i class="bar"></i>
+      <h3>N3<em class="jp">中級</em></h3>
+      <p>Chưa mở trong bản beta.</p>
+      <span class="t">Chưa mở</span><i class="bar"></i>
     </div>
     <div class="les" data-les="3" data-cursor>
       <span class="k">04</span>
-      <h3>Lantern Light<em class="jp">灯籠</em></h3>
-      <p>How a single ember decides the scale of everything around it.</p>
-      <span class="t">17 min</span><i class="bar"></i>
+      <h3>N2<em class="jp">上級</em></h3>
+      <p>Chưa mở trong bản beta.</p>
+      <span class="t">Chưa mở</span><i class="bar"></i>
     </div>
     <div class="les" data-les="4" data-cursor>
       <span class="k">05</span>
-      <h3>The Vermilion Moon<em class="jp">朱月</em></h3>
-      <p>Why the moon burns red over the valley, and what the garden does with it.</p>
-      <span class="t">22 min</span><i class="bar"></i>
+      <h3>N1<em class="jp">最上級</em></h3>
+      <p>Chưa mở; lộ trình và bài thi thử cuối cấp chưa được triển khai.</p>
+      <span class="t">Chưa mở</span><i class="bar"></i>
     </div>
   </div>
 </section>
@@ -1135,12 +1145,11 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
       <img src="secret-pathways-assets/foreground/png/sakura-branch.webp" alt="" width="1536" height="1024" loading="lazy" decoding="async">
     </span>
   </div>
-  <div class="eyebrow" data-rv="fade">Chapter 04 — Afterlight</div>
-  <h2 class="display" data-rv="up">Afterlight</h2>
-  <p class="body-lg" data-rv="up">The gate does not close behind you. Take the walk whenever the noise
-    gets loud — it is always the same path, and never the same light.</p>
-  <a class="cta" href="#top" data-rv="fade" data-cursor>
-    <i></i><span>Begin the walk</span>
+  <div class="eyebrow" data-rv="fade">04 — Thư viện cộng đồng</div>
+  <h2 class="display" data-rv="up">Học cùng bài đã được duyệt.</h2>
+  <p class="body-lg" data-rv="up">Khám phá bài học do người học chia sẻ sau khi quản trị viên kiểm tra. Bài học từ tài liệu riêng vẫn là bản nháp cho đến khi bạn tự xem lại và xác nhận.</p>
+  <a class="cta" href="/thu-vien" target="_top" data-rv="fade" data-cursor>
+    <i></i><span>Mở thư viện</span>
     <svg viewBox="0 0 14 14" fill="none" width="13" height="13"><path d="M3 11 11 3M5 3h6v6" stroke="#dfe7e0" stroke-width="1.3"/></svg>
   </a>
 </section>
@@ -1165,31 +1174,30 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
         <circle cx="22" cy="25" r="8.6" fill="#e0231c" fill-opacity=".9"/>
         <path d="M5 13h34M9 18.4h26M22 8.5v27" stroke="#dfe7e0" stroke-width="1.5"/>
       </svg>
-      <p>A five-chapter night walk through a Kyoto mountain temple. Three illustrated garden field notes
-        sit inside a live Three.js sanctuary.</p>
+      <p>Manabi hỗ trợ người Việt tự học tiếng Nhật: luyện tập, xem lại tiến độ và tạo bản nháp bài học từ tài liệu cá nhân.</p>
     </div>
-    <div><h4>Chapters</h4><ul>
-      <li><a href="#gate" data-cursor>The Sanmon</a></li>
-      <li><a href="#pathways" data-cursor>Still Gardens</a></li>
-      <li><a href="#lessons" data-cursor>Sacred Craft</a></li>
-      <li><a href="#eternity" data-cursor>Afterlight</a></li>
+    <div><h4>Học JLPT</h4><ul>
+      <li><a href="#gate" data-cursor>Lộ trình N5–N1</a></li>
+      <li><a href="/" target="_top" data-cursor>Luyện câu mẫu N5</a></li>
+      <li><a href="/auth" target="_top" data-cursor>Theo dõi tiến độ</a></li>
+      <li><a href="/nguon-hoc-lieu" target="_top" data-cursor>Nguồn học liệu</a></li>
     </ul></div>
-    <div><h4>Practice</h4><ul>
-      <li><a href="#lessons" data-cursor>Borrowed scenery</a></li>
-      <li><a href="#lessons" data-cursor>Lantern light</a></li>
-      <li><a href="#lessons" data-cursor>Charred cypress</a></li>
-      <li><a href="#lessons" data-cursor>Raked gravel</a></li>
+    <div><h4>Tài liệu của bạn</h4><ul>
+      <li><a href="/tai-lieu" target="_top" data-cursor>Tải tài liệu</a></li>
+      <li><a href="/tai-lieu" target="_top" data-cursor>Tạo bản nháp AI</a></li>
+      <li><a href="/tai-lieu" target="_top" data-cursor>Xem lại và xác nhận</a></li>
+      <li><a href="/tai-lieu" target="_top" data-cursor>Quyền chia sẻ</a></li>
     </ul></div>
-    <div><h4>Elsewhere</h4><ul>
-      <li><a href="#top" data-cursor>Journal</a></li>
-      <li><a href="#top" data-cursor>Field notes</a></li>
-      <li><a href="#top" data-cursor>Colophon</a></li>
+    <div><h4>Thư viện</h4><ul>
+      <li><a href="/thu-vien" target="_top" data-cursor>Bài học đã duyệt</a></li>
+      <li><a href="#eternity" data-cursor>Quy trình kiểm duyệt</a></li>
+      <li><a href="/nguon-hoc-lieu" target="_top" data-cursor>Minh bạch nguồn học liệu</a></li>
     </ul></div>
   </div>
   <div class="foot-base">
-    <span>© 2026 Kage — Kage no Michi</span>
-    <span class="jp">静けさは一つの技である</span>
-    <span>WebGL · Onest · Kyoto</span>
+    <span>© 2026 Manabi · Bản beta</span>
+    <span class="jp">一歩ずつ学ぶ</span>
+    <span>Tiếng Việt · Tiếng Nhật · JLPT N5–N1</span>
   </div>
 </footer>
 
@@ -3018,15 +3026,13 @@ function buildForeground() {
 /* --------------------------------------------------- the giant wordmark */
 const WORD_Z = 3.0;
 function buildWordmark() {
-  /* The word is set to the frame width, so a short word is a *taller* word.
-     Four letters at the old tracking put a 400-pixel cap height across the
-     scene; the letters are spaced out instead, which keeps the type edge to
-     edge while the caps come back down to the height of the headline block. */
-  const SZ = 320, TRACK = .40, PAD = 26;
+  /* Keep the name as a quiet scene title: enough width to read over the garden,
+     with clear breathing room around the hero copy and the lower chapter links. */
+  const SZ = 320, TRACK = .32, PAD = 26;
   const m = cvs(4, 4).getContext('2d');
   m.font = '600 ' + SZ + 'px Wordmark, sans-serif';
   m.textBaseline = 'alphabetic'; m.textAlign = 'left';
-  const word = 'KAGE', gl = [];
+  const word = 'LINH KATA', gl = [];
   let pen = 0, ascMax = 0, descMax = 0, xMin = 1e9, xMax = -1e9;
   for (const ch of word) {
     const t = m.measureText(ch);
@@ -3828,11 +3834,12 @@ function createCloth(output, plate, options) {
 /* the plate: the card's own still, cover-cropped, carrying the two scrims the
    CSS used to lay over it — baked in so they ripple with the cloth instead of
    sitting flat on top of it */
-function clothPlate(img, w, h) {
+function clothPlate(img, w, h, focusY) {
   const c = cvs(Math.max(1, w | 0), Math.max(1, h | 0)), x = c.getContext('2d');
   const s = Math.max(c.width / img.width, c.height / img.height);
   const dw = img.width * s, dh = img.height * s;
-  x.drawImage(img, (c.width - dw) / 2, (c.height - dh) / 2, dw, dh);
+  const focal = clamp((Number(focusY) || 50) / 100, 0, 1);
+  x.drawImage(img, (c.width - dw) / 2, (c.height - dh) * focal, dw, dh);
   let g = x.createLinearGradient(0, 0, 0, c.height);
   g.addColorStop(.36, 'rgba(3,6,9,.05)'); g.addColorStop(1, 'rgba(3,6,9,.73)');
   x.fillStyle = g; x.fillRect(0, 0, c.width, c.height);
@@ -3850,10 +3857,11 @@ function buildCardCloth() {
     const img = new Image();
     img.onload = () => {
       const dpr = Math.min(devicePixelRatio || 1, 2);
+      const focusY = getComputedStyle(fr).getPropertyValue('--plate-y').trim();
       let plate = null, pw = 0, ph = 0;
       const get = () => {
         const w = Math.round(fr.clientWidth * dpr), h = Math.round(fr.clientHeight * dpr);
-        if (!plate || w !== pw || h !== ph) { plate = clothPlate(img, w, h); pw = w; ph = h; }
+        if (!plate || w !== pw || h !== ph) { plate = clothPlate(img, w, h, focusY); pw = w; ph = h; }
         return plate;
       };
       const out = document.createElement('canvas');
@@ -4124,15 +4132,13 @@ function layoutWord() {
      phone — on a width test it took the desktop baseline and sat below the
      fold with only the top of the G showing. */
   const narrow = vpW() / vpH() < 1.05;
-  /* Four wide-tracked letters reach the frame edge exactly; pushing past it,
-     as the six-letter word could afford to, decapitates the K and the E. The
-     narrow branch is held a little inside the edge because a phone frame has
-     no gutter to lose the tracking that trails the final letter into. */
-  const fill = narrow ? .96 : 1.00;
+  /* The name is intentionally held well inside the frame. On a phone, the
+     extra inset protects both the tracking and the hero copy from collision. */
+  const fill = narrow ? .76 : .74;
   const s = (R.x - L.x) * fill / WORD.ink.w;
   /* on a tall frame the mounds sit near mid-height, so the baseline has to
      ride above them or the whole word disappears into the grass */
-  const base = hit(0, narrow ? -.16 : -.585);
+  const base = hit(0, narrow ? -.20 : -.64);
   WORD.group.scale.setScalar(s);
   WORD.group.position.set(-WORD.ink.cx * s, base.y, WORD_Z);
   WORD.rise = WORD.ink.asc * s * 1.25;
@@ -4329,7 +4335,7 @@ function wireHeroExit() {
 function wireNav() {
   let last = 0;
   const rail = $('#rail');
-  const names = ['The Hidden Gate', 'The Sanmon', 'Still Gardens', 'Sacred Craft', 'Afterlight', 'Colophon'];
+  const names = ['Manabi — JLPT N5–N1', 'Lộ trình JLPT', 'Học và xem lại', 'Lộ trình và tài liệu', 'Thư viện cộng đồng', 'Thông tin Manabi'];
   SECS.forEach((s, i) => {
     const b = document.createElement('button');
     b.innerHTML = '<i></i>'; b.title = names[i] || '';
@@ -4369,7 +4375,10 @@ function wireNav() {
      one link per section in matching order. With five links over four chapters
      every entry past the third lit for its neighbour: standing in Afterlight
      highlighted Stories. Reading the destination cannot drift. */
-  const linkSec = links.map(l => SECS.indexOf(document.querySelector(l.getAttribute('href'))));
+  const linkSec = links.map(l => {
+    const href = l.getAttribute('href');
+    return href && href.startsWith('#') ? SECS.indexOf(document.querySelector(href)) : -1;
+  });
   window.addEventListener('scroll', () => {
     const y = scrollY;
     nav.classList.toggle('stuck', y > 40);
@@ -4635,7 +4644,7 @@ function updateWorld(dt) {
       const st = clamp((WORD.reveal - i * .075) / .62, 0, 1);
       const e = easeOut(st);
       g.position.y = g.userData.baseY - (1 - e) * (WORD.ink.asc * 1.15);
-      g.material.opacity = e * (1 - near * .96);
+      g.material.opacity = e * .64 * (1 - near * .96);
       g.visible = g.material.opacity > .004;
     });
   }
@@ -4701,13 +4710,13 @@ function queue() { TIMER ? setTimeout(() => frame(performance.now()), 16) : requ
 
 /* ======================================================== 14 · booting */
 const JOBS = [
-  ['Reading the type', () => document.fonts && document.fonts.load('600 320px Wordmark')],
-  ['Pouring the ground', () => { initGL(); WORLD.uT = { value: 0 }; buildRig(); buildLights(); }],
-  ['Cutting the approach', () => buildShell()],
-  ['Raising the hall', () => buildTemple()],
-  ['Hanging the moon', () => buildMoon()],
-  ['Setting the gate', () => buildTorii()],
-  ['Placing the stones', () => {
+  ['Đang nạp kiểu chữ', () => document.fonts && document.fonts.load('600 320px Wordmark')],
+  ['Đang chuẩn bị không gian học', () => { initGL(); WORLD.uT = { value: 0 }; buildRig(); buildLights(); }],
+  ['Đang dựng cảnh nền', () => buildShell()],
+  ['Đang sắp xếp nội dung', () => buildTemple()],
+  ['Đang cân chỉnh ánh sáng', () => buildMoon()],
+  ['Đang hoàn tất giao diện', () => buildTorii()],
+  ['Đang chuẩn bị chi tiết', () => {
     buildRocks();
     buildLantern(7.4, -7.0, 1.15); buildLantern(-7.6, -5.2, 1.0);
     /* The pairs flanking the flight were given flat heights — 2 and PODIUM —

@@ -8,6 +8,7 @@
   --secondary: #e8eef5; --secondary-foreground: #1c456b; --muted: #eef2f6; --muted-foreground: #5d7082;
   --accent: #e8eef5; --accent-foreground: #1c456b; --destructive: #b93e37; --border: #dce4eb;
   --input: #dce4eb; --ring: #6e9cc5; --radius: 0.75rem;
+  --notebook-coral: #e5593f; --study-link: #315b85; --study-tint: #eef5fb;
 }
 @theme inline {
   --color-background: var(--background); --color-foreground: var(--foreground); --color-card: var(--card);
@@ -19,8 +20,9 @@
   --color-destructive: var(--destructive); --color-border: var(--border); --color-input: var(--input);
   --color-ring: var(--ring); --radius-sm: calc(var(--radius) - 4px); --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius); --radius-xl: calc(var(--radius) + 4px);
+  --color-notebook-coral: var(--notebook-coral); --color-study-link: var(--study-link); --color-study-tint: var(--study-tint);
   --font-sans: Arial, "Noto Sans JP", "Yu Gothic", sans-serif;
 }
 body { background: var(--background); color: var(--foreground); font-family: Arial, "Noto Sans JP", "Yu Gothic", sans-serif; }
 button { cursor: pointer; }
-.eyebrow { color: #df593f; font-size: 0.82rem; font-weight: 800; letter-spacing: 0.11em; text-transform: uppercase; }
+.eyebrow { color: var(--notebook-coral); font-size: 0.82rem; font-weight: 800; letter-spacing: 0.11em; text-transform: uppercase; }
