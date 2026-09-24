@@ -1,0 +1,8 @@
+.kage-preview,
+.kage-preview .shader-frame {
+  width: 100%;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+  background: #080808;
+}
