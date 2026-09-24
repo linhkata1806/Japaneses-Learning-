@@ -20,6 +20,16 @@ export const accountIdentities = sqliteTable("account_identities", {
   createdAt: text("created_at").notNull(),
 }, (table) => [index("idx_account_identities_user").on(table.userId)]);
 
+export const authSessions = sqliteTable("auth_sessions", {
+  tokenHash: text("token_hash").primaryKey(),
+  userId: text("user_id").notNull(),
+  email: text("email").notNull(),
+  displayName: text("display_name").notNull(),
+  avatarUrl: text("avatar_url"),
+  expiresAt: text("expires_at").notNull(),
+  createdAt: text("created_at").notNull(),
+}, (table) => [index("idx_auth_sessions_expires").on(table.expiresAt)]);
+
 export const studyPlans = sqliteTable("study_plans", {
   id: text("id").primaryKey(),
   userId: text("user_id").notNull(),

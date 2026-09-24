@@ -53,8 +53,8 @@ These facts were inspected in repository code; a deployed environment was not ve
 - Signed-in sample attempts feed answer history, accuracy, XP, daily streaks, and mistake review. Generated and shared lesson quizzes currently retain quiz state locally; they do not contribute to the same saved-attempt history.
 - Personal uploads accept PDF, DOCX, and TXT files up to 2 MB. Gemini generation is enabled only when configured, with up to three successful generations per account per Vietnam calendar day. The interface discloses provider data-use considerations before consent.
 - AI drafts contain editable summaries, multiple-choice questions, answers, explanations, and source references. Generated lessons may carry N5–N1 labels even while higher-level built-in practice is locked; these labels do not unlock the curriculum.
-- ChatGPT sign-in is provided by the hosted Sites environment; local portable development simulates it. Email authentication is available when Supabase is configured. Verified matching email identities can share progress; unverified email must not link accounts.
-- The existing implementation uses React with Next.js App Router conventions through Vinext/Vite, Cloudflare D1/R2, and Drizzle. The documented local command is `npm run dev`, serving port 5173. See `README.md` for runtime configuration and prerequisites.
+- ChatGPT sign-in is provided by the hosted Sites environment; local portable development simulates it. Google uses direct OAuth with verified email and stable subject mapping in D1. Verified matching email identities can share progress; unverified email must not link accounts.
+- The existing implementation uses React with Next.js App Router conventions through Vinext/Vite, Cloudflare Workers, D1, and Drizzle. File upload remains temporarily unavailable. The documented local command is `npm run dev`, serving port 5173. See `README.md` for runtime configuration and prerequisites.
 
 ### Open decisions
 
