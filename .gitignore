@@ -40,7 +40,9 @@ tsconfig.tsbuildinfo
 
 # build outputs
 /dist/
-/build/
+build/*
+!build/sites-vite-plugin.ts
+!build/sites-vite-plugin.LICENSE
 
 /.wrangler/
 
