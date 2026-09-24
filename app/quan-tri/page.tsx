@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { authFetch } from "@/lib/browser-auth";
@@ -51,13 +52,13 @@ export default function ModerationPage() {
   }
 
   return <main className="mx-auto max-w-4xl px-5 py-10">
-    <a href="/" className="text-sm font-semibold text-[#315b85]">← Trang học</a>
+    <Link href="/" className="text-sm font-semibold text-study-link">← Trang học</Link>
     <p className="eyebrow mt-8">Quản trị nội dung</p><h1 className="mt-2 text-3xl font-bold">Bài học chờ duyệt</h1>
     {message && <p role="status" className="mt-6 rounded-xl border border-border bg-white p-4">{message}</p>}
     <div className="mt-7 space-y-6">{items.map(item => <article key={item.id} className="rounded-2xl border border-border bg-white p-6">
-      <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground"><span className="font-bold text-[#315b85]">{item.content.level}</span><span>Phiên bản {item.version}</span><span>{item.authorEmail || "Học viên"}</span></div>
+      <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground"><span className="font-bold text-study-link">{item.content.level}</span><span>Phiên bản {item.version}</span><span>{item.authorEmail || "Học viên"}</span></div>
       <h2 className="mt-3 text-xl font-bold">{item.content.title}</h2>
-      <button type="button" onClick={() => downloadSource(item.documentId)} className="mt-2 text-sm font-semibold text-[#315b85] underline">Tải tài liệu gốc để đối chiếu</button>
+      <button type="button" onClick={() => downloadSource(item.documentId)} className="mt-2 text-sm font-semibold text-study-link underline">Tải tài liệu gốc để đối chiếu</button>
       <p className="mt-3 whitespace-pre-wrap leading-7">{item.content.summary}</p>
       <div className="mt-4 space-y-3">{item.content.questions.map((question, index) => <div key={index} className="rounded-xl bg-[#f5f7f9] p-4 text-sm leading-6">
         <p className="font-bold">Câu {index + 1}: {question.question}</p>

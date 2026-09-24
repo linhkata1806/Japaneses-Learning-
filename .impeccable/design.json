@@ -1,0 +1,133 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-24T02:07:34Z",
+  "title": "Design System: Manabi",
+  "extensions": {
+    "colorMeta": {
+      "harbor-ink": { "role": "primary", "displayName": "Harbor Ink", "tonalRamp": ["oklch(15% 0.080 249)", "oklch(26% 0.080 249)", "oklch(37% 0.080 249)", "oklch(48% 0.080 249)", "oklch(59% 0.080 249)", "oklch(70% 0.080 249)", "oklch(81% 0.080 249)", "oklch(92% 0.080 249)"] },
+      "notebook-coral": { "role": "secondary", "displayName": "Notebook Coral", "tonalRamp": ["oklch(15% 0.179 33)", "oklch(26% 0.179 33)", "oklch(37% 0.179 33)", "oklch(48% 0.179 33)", "oklch(59% 0.179 33)", "oklch(70% 0.179 33)", "oklch(81% 0.179 33)", "oklch(92% 0.179 33)"] },
+      "mist": { "role": "neutral", "displayName": "Mist", "tonalRamp": ["oklch(15% 0.003 248)", "oklch(26% 0.003 248)", "oklch(37% 0.003 248)", "oklch(48% 0.003 248)", "oklch(59% 0.003 248)", "oklch(70% 0.003 248)", "oklch(81% 0.003 248)", "oklch(92% 0.003 248)"] },
+      "ink": { "role": "neutral", "displayName": "Ink", "tonalRamp": ["oklch(15% 0.044 247)", "oklch(26% 0.044 247)", "oklch(37% 0.044 247)", "oklch(48% 0.044 247)", "oklch(59% 0.044 247)", "oklch(70% 0.044 247)", "oklch(81% 0.044 247)", "oklch(92% 0.044 247)"] },
+      "white": { "role": "neutral", "displayName": "White", "tonalRamp": ["oklch(15% 0.000 90)", "oklch(26% 0.000 90)", "oklch(37% 0.000 90)", "oklch(48% 0.000 90)", "oklch(59% 0.000 90)", "oklch(70% 0.000 90)", "oklch(81% 0.000 90)", "oklch(92% 0.000 90)"] },
+      "mist-panel": { "role": "neutral", "displayName": "Mist Panel", "tonalRamp": ["oklch(15% 0.007 248)", "oklch(26% 0.007 248)", "oklch(37% 0.007 248)", "oklch(48% 0.007 248)", "oklch(59% 0.007 248)", "oklch(70% 0.007 248)", "oklch(81% 0.007 248)", "oklch(92% 0.007 248)"] },
+      "pale-blue": { "role": "secondary", "displayName": "Pale Blue", "tonalRamp": ["oklch(15% 0.011 252)", "oklch(26% 0.011 252)", "oklch(37% 0.011 252)", "oklch(48% 0.011 252)", "oklch(59% 0.011 252)", "oklch(70% 0.011 252)", "oklch(81% 0.011 252)", "oklch(92% 0.011 252)"] },
+      "muted-text": { "role": "neutral", "displayName": "Muted Text", "tonalRamp": ["oklch(15% 0.036 247)", "oklch(26% 0.036 247)", "oklch(37% 0.036 247)", "oklch(48% 0.036 247)", "oklch(59% 0.036 247)", "oklch(70% 0.036 247)", "oklch(81% 0.036 247)", "oklch(92% 0.036 247)"] },
+      "border": { "role": "neutral", "displayName": "Blue-gray Border", "tonalRamp": ["oklch(15% 0.013 244)", "oklch(26% 0.013 244)", "oklch(37% 0.013 244)", "oklch(48% 0.013 244)", "oklch(59% 0.013 244)", "oklch(70% 0.013 244)", "oklch(81% 0.013 244)", "oklch(92% 0.013 244)"] },
+      "focus-blue": { "role": "primary", "displayName": "Focus Blue", "tonalRamp": ["oklch(15% 0.079 246)", "oklch(26% 0.079 246)", "oklch(37% 0.079 246)", "oklch(48% 0.079 246)", "oklch(59% 0.079 246)", "oklch(70% 0.079 246)", "oklch(81% 0.079 246)", "oklch(92% 0.079 246)"] },
+      "error-red": { "role": "error", "displayName": "Error Red", "tonalRamp": ["oklch(15% 0.160 27)", "oklch(26% 0.160 27)", "oklch(37% 0.160 27)", "oklch(48% 0.160 27)", "oklch(59% 0.160 27)", "oklch(70% 0.160 27)", "oklch(81% 0.160 27)", "oklch(92% 0.160 27)"] },
+      "study-link": { "role": "secondary", "displayName": "Study Link Blue", "tonalRamp": ["oklch(15% 0.084 250)", "oklch(26% 0.084 250)", "oklch(37% 0.084 250)", "oklch(48% 0.084 250)", "oklch(59% 0.084 250)", "oklch(70% 0.084 250)", "oklch(81% 0.084 250)", "oklch(92% 0.084 250)"] },
+      "study-tint": { "role": "secondary", "displayName": "Study Tint", "tonalRamp": ["oklch(15% 0.012 250)", "oklch(26% 0.012 250)", "oklch(37% 0.012 250)", "oklch(48% 0.012 250)", "oklch(59% 0.012 250)", "oklch(70% 0.012 250)", "oklch(81% 0.012 250)", "oklch(97% 0.012 250)"] }
+    },
+    "typographyMeta": {
+      "headline": { "displayName": "Headline", "purpose": "Page and section headings in the learner workspace." },
+      "body": { "displayName": "Body", "purpose": "Vietnamese guidance, descriptions, controls, and explanations." },
+      "label": { "displayName": "Eyebrow Label", "purpose": "Small uppercase section eyebrows where present." }
+    },
+    "shadows": [
+      { "name": "control-edge", "value": "0 1px 2px 0 rgb(0 0 0 / 0.05)", "purpose": "Resting edge on outline buttons and text fields." },
+      { "name": "card-rest", "value": "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)", "purpose": "Light separation on the shared Card primitive." },
+      { "name": "browse-hover", "value": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)", "purpose": "Hover depth on community lesson links." }
+    ],
+    "motion": [
+      { "name": "control-transition", "value": "150ms cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Color, border, and shadow changes on interactive controls." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Main learner action, such as checking an answer.",
+      "html": "<button class=\"ds-button-primary\">Kiểm tra đáp án</button>",
+      "css": ".ds-button-primary { min-height: 36px; padding: 8px 16px; border: 0; border-radius: 10px; background: #1c456b; color: #fff; font: 500 14px/20px Arial, 'Noto Sans JP', 'Yu Gothic', sans-serif; transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; } .ds-button-primary:hover { background: #173855; } .ds-button-primary:focus-visible { outline: 0; box-shadow: 0 0 0 3px rgb(110 156 197 / 0.5); } .ds-button-primary:disabled { opacity: 0.5; cursor: not-allowed; }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary or answer-choice action with a quiet border.",
+      "html": "<button class=\"ds-button-outline\">Chọn đáp án</button>",
+      "css": ".ds-button-outline { min-height: 36px; padding: 8px 16px; border: 1px solid #dce4eb; border-radius: 10px; background: #fff; color: #1b3043; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); font: 500 14px/20px Arial, 'Noto Sans JP', 'Yu Gothic', sans-serif; transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1), color 150ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; } .ds-button-outline:hover { background: #e8eef5; color: #1c456b; } .ds-button-outline:focus-visible { outline: 0; box-shadow: 0 0 0 3px rgb(110 156 197 / 0.5); } .ds-button-outline:disabled { opacity: 0.5; cursor: not-allowed; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "A compact field for search, labels, or document metadata.",
+      "html": "<input class=\"ds-input\" aria-label=\"Tìm tài liệu\" placeholder=\"Tìm tài liệu\" />",
+      "css": ".ds-input { width: 100%; height: 36px; padding: 4px 12px; border: 1px solid #dce4eb; border-radius: 10px; background: #fff; color: #1b3043; font: 400 14px/20px Arial, 'Noto Sans JP', 'Yu Gothic', sans-serif; transition: border-color 150ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-input::placeholder { color: #5d7082; } .ds-input:focus-visible { border-color: #6e9cc5; outline: 0; box-shadow: 0 0 0 3px rgb(110 156 197 / 0.5); } .ds-input:disabled { opacity: 0.5; cursor: not-allowed; } .ds-input[aria-invalid='true'] { border-color: #b93e37; box-shadow: 0 0 0 3px rgb(185 62 55 / 0.2); }"
+    },
+    {
+      "name": "Lesson Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "White bordered surface for a lesson or study document.",
+      "html": "<a class=\"ds-card\" href=\"#lesson\"><strong>N5 · Từ vựng</strong><span>Bài học đã duyệt</span></a>",
+      "css": ".ds-card { display: flex; flex-direction: column; gap: 12px; padding: 24px; border: 1px solid #dce4eb; border-radius: 16px; background: #fff; color: #1b3043; text-decoration: none; box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); transition: border-color 150ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-card:hover { border-color: #789cba; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); } .ds-card:focus-visible { outline: 0; box-shadow: 0 0 0 3px rgb(110 156 197 / 0.5); }"
+    },
+    {
+      "name": "Level Badge",
+      "kind": "chip",
+      "refersTo": "level-badge",
+      "description": "Compact JLPT level marker on a lesson.",
+      "html": "<span class=\"ds-level-badge\">N5</span>",
+      "css": ".ds-level-badge { display: inline-flex; align-items: center; padding: 4px 12px; border: 1px solid transparent; border-radius: 9999px; background: #e8eef5; color: #315b85; font: 700 14px/20px Arial, 'Noto Sans JP', 'Yu Gothic', sans-serif; white-space: nowrap; }"
+    },
+    {
+      "name": "Header Link",
+      "kind": "nav",
+      "refersTo": "navigation-link",
+      "description": "Compact learner navigation or return link in the white header.",
+      "html": "<a class=\"ds-navigation-link\" href=\"#materials\">Tài liệu của tôi</a>",
+      "css": ".ds-navigation-link { display: inline-flex; align-items: center; min-height: 32px; padding: 4px 12px; border-radius: 9999px; background: #fff; color: #1c456b; font: 500 14px/20px Arial, 'Noto Sans JP', 'Yu Gothic', sans-serif; text-decoration: none; transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1), color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-navigation-link:hover { background: #eef5fb; text-decoration: underline; text-underline-offset: 4px; } .ds-navigation-link:focus-visible { outline: 0; box-shadow: 0 0 0 3px rgb(110 156 197 / 0.5); }"
+    },
+    {
+      "name": "Practice Option",
+      "kind": "custom",
+      "refersTo": "practice-option",
+      "description": "Full-width answer choice with visible selected and feedback states.",
+      "html": "<button class=\"ds-practice-option\" aria-pressed=\"false\"><span>A</span><span lang=\"ja\">飲みます</span></button>",
+      "css": ".ds-practice-option { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 62px; padding: 12px 16px; border: 1px solid #dce4eb; border-radius: 16px; background: #fff; color: #1b3043; text-align: left; font: 500 16px/24px Arial, 'Noto Sans JP', 'Yu Gothic', sans-serif; cursor: pointer; transition: border-color 150ms cubic-bezier(0.4, 0, 0.2, 1), background-color 150ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-practice-option:hover:not(:disabled) { border-color: #b4c1cb; background: #fafbfc; } .ds-practice-option[aria-pressed='true'] { border-color: #8ca1b3; background: #f5f7f9; } .ds-practice-option:focus-visible { outline: 0; box-shadow: 0 0 0 3px rgb(110 156 197 / 0.5); } .ds-practice-option:disabled { cursor: not-allowed; }"
+    },
+    {
+      "name": "Manabi Brand",
+      "kind": "brand",
+      "description": "Shared linked wordmark for learner route headers, with full and compact layouts.",
+      "html": "<a href=\"/\" aria-label=\"Manabi — trang học\"><span>日</span><span>Manabi<span>.</span></span></a>",
+      "css": "Uses Harbor Ink for the wordmark and Notebook Coral for the terminal dot; compact headers omit the 日 tile."
+    }
+  ],
+  "narrative": {
+    "northStar": "A Clear Study Desk",
+    "overview": "Manabi is a calm, practical workspace for Vietnamese-speaking independent learners studying Japanese and preparing for the JLPT. Mist surfaces, clear type, and familiar controls keep attention on the next study action. Harbor Ink carries the main hierarchy; Notebook Coral marks a small number of identity and progress cues.\n\nThe interface should make it easy to answer a question, understand its explanation, and revisit learning material. Keep Vietnamese guidance legible beside Japanese study text, and use clear states to distinguish a sample, an AI draft, a learner-confirmed lesson, and reviewed public material. The isolated `/kage-preview` route embeds a separate authored visual world; keep it scoped to that preview rather than applying its styling to Manabi learner flows.",
+    "keyCharacteristics": [
+      "Calm, clear, and practical.",
+      "Cool Mist surfaces with white work panels and fine blue-gray borders.",
+      "Harbor Ink establishes hierarchy; Notebook Coral stays a small cue.",
+      "Japanese examples receive room to breathe within Vietnamese-language guidance."
+    ],
+    "rules": [
+      { "name": "The Coral Cue Rule", "body": "Keep Notebook Coral to small identity or progress cues. Use Harbor Ink for primary actions and study links.", "section": "colors" },
+      { "name": "The Study-First Type Rule", "body": "Set Japanese study text apart through size and spacing while keeping the surrounding Vietnamese explanation easy to find.", "section": "typography" },
+      { "name": "The Quiet Rest Rule", "body": "Keep the practice surface close to the page; reserve stronger depth for items that invite browsing.", "section": "elevation" }
+    ],
+    "dos": [
+      "**Do** use Harbor Ink for primary actions and Notebook Coral for small brand or progress cues.",
+      "**Do** keep Vietnamese guidance and Japanese study text visually connected and easy to distinguish.",
+      "**Do** use clear borders and Mist-to-White contrast to define work areas.",
+      "**Do** preserve honest visual differences between sample, draft, confirmed, and approved learning content.",
+      "**Do** keep `/kage-preview` isolated from the Manabi learner interface."
+    ],
+    "donts": [
+      "**Don't** spread Notebook Coral across large surfaces or use it as the default action color.",
+      "**Don't** rely on color alone for answer correctness or content review state.",
+      "**Don't** mix Kage’s separate preview styling into Manabi’s learner routes.",
+      "**Don't** add shadows to every panel; use depth only where a control or browsing choice needs it."
+    ]
+  }
+}

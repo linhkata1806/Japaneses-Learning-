@@ -59,8 +59,8 @@ export default function EmailAuthForm() {
       </label>}
       <Button disabled={busy} type="submit" className="h-11 w-full">{busy ? "Đang xử lý…" : mode === "login" ? "Đăng nhập bằng email" : mode === "signup" ? "Tạo tài khoản" : "Gửi liên kết đặt lại"}</Button>
     </form>
-    {mode === "login" && <button type="button" onClick={() => { setMode("recover"); setMessage(""); }} className="mt-4 text-sm font-semibold text-[#315b85]">Quên mật khẩu?</button>}
-    {mode === "recover" && <button type="button" onClick={() => { setMode("login"); setMessage(""); }} className="mt-4 text-sm font-semibold text-[#315b85]">Quay lại đăng nhập</button>}
-    {message && <p role="status" className="mt-4 rounded-xl bg-[#eef5fb] p-3 text-sm leading-6">{message}</p>}
+    {mode === "login" && <button type="button" onClick={() => { setMode("recover"); setMessage(""); }} className="mt-4 text-sm font-semibold text-study-link">Quên mật khẩu?</button>}
+    {mode === "recover" && <button type="button" onClick={() => { setMode("login"); setMessage(""); }} className="mt-4 text-sm font-semibold text-study-link">Quay lại đăng nhập</button>}
+    {message && <p role="status" className="mt-4 rounded-xl bg-study-tint p-3 text-sm leading-6">{message}</p>}
   </div>;
 }
