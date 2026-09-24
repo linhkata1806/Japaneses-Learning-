@@ -154,6 +154,13 @@ h1,h2,h3{ font-weight:400; margin:0; letter-spacing:-.005em; }
 .nav-link:hover .alt{ transform:none; }
 .nav-link.on{ color:var(--bone); }
 .nav-link.on::after{ content:''; position:absolute; left:0; bottom:0; width:100%; height:1px; background:var(--vermilion); }
+.nav-account{ display:none; align-items:center; gap:7px; max-width:160px; color:var(--bone); font-size:11px; white-space:nowrap; }
+.nav-account.show{ display:flex; }
+.nav-account img,.nav-account .initial{ width:22px; height:22px; flex:none; border-radius:50%; object-fit:cover; }
+.nav-account .initial{ display:grid; place-items:center; background:#29362f; font-size:10px; }
+.nav-account .name{ overflow:hidden; text-overflow:ellipsis; }
+.nav-logout{ display:none; border:0; background:transparent; text-align:left; cursor:pointer; }
+.nav-logout.show{ display:block; }
 .nav-burger{ margin-left:clamp(18px,2.6vw,42px); width:26px; height:16px; position:relative; flex:0 0 auto; }
 .nav-burger i{ position:absolute; right:0; height:1.5px; background:var(--bone); transition:width .45s var(--ease-out), transform .45s var(--ease-out); }
 .nav-burger i:nth-child(1){ top:4px; width:26px; }
@@ -477,7 +484,7 @@ h1,h2,h3{ font-weight:400; margin:0; letter-spacing:-.005em; }
   .les p{ display:none; }
   .foot-grid{ grid-template-columns:1fr 1fr; }
 }
-@media (max-width:820px){
+@media (max-width:1050px){
   .nav-links{
     display:flex; position:fixed; top:0; right:0; bottom:0; width:min(84vw,360px);
     padding:calc(var(--nav-h) + 28px) var(--pad) 34px; flex-direction:column; align-items:flex-start; gap:0;
@@ -494,6 +501,8 @@ h1,h2,h3{ font-weight:400; margin:0; letter-spacing:-.005em; }
   }
   .nav-links .nav-link span{ height:auto; line-height:1.2; transform:none !important; }
   .nav-links .nav-link .alt{ position:static; margin-top:6px; font-size:10px; color:var(--muted); }
+  .nav-links .nav-account{ max-width:100%; min-height:52px; font-size:14px; }
+  .nav-links .nav-account img,.nav-links .nav-account .initial{ width:28px; height:28px; }
   /* The links panel leaves the flow to become the slide-in sheet, taking its
      margin-left:auto with it, so without this the burger sits tucked against
      the wordmark instead of out at the edge where a thumb reaches. */
@@ -933,8 +942,11 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
   <nav class="nav-links" id="navlinks" aria-label="Điều hướng nội dung">
     <a class="nav-link" href="#lessons" data-cursor><span>Lộ trình</span><span class="alt">学習</span></a>
     <a class="nav-link" href="#pathways" data-cursor><span>Luyện tập</span><span class="alt">練習</span></a>
-    <a class="nav-link" href="/tai-lieu" target="_top" data-cursor><span>Tài liệu</span><span class="alt">教材</span></a>
-    <a class="nav-link" href="/thu-vien" target="_top" data-cursor><span>Thư viện</span><span class="alt">図書館</span></a>
+    <a class="nav-link" href="/login?returnTo=%2Fdocuments" data-auth-link="documents" target="_top" data-cursor><span>Tài liệu</span><span class="alt">教材</span></a>
+    <a class="nav-link" href="/library" target="_top" data-cursor><span>Thư viện</span><span class="alt">図書館</span></a>
+    <a class="nav-link" href="/login" data-auth-link="signin" target="_top" data-cursor style="display:none"><span>Đăng nhập</span><span class="alt">ログイン</span></a>
+    <span class="nav-account" data-account aria-label="Tài khoản"></span>
+    <button class="nav-link nav-logout" type="button" data-sign-out data-cursor><span>Đăng xuất</span><span class="alt">ログアウト</span></button>
   </nav>
   <button class="nav-burger" aria-label="Mở điều hướng" data-cursor><i></i><i></i></button>
 </header>
@@ -951,7 +963,7 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
        <span class="mask-line"><span>N1.</span></span>
     </h1>
     <p class="hero-sub body" data-rv="up">Luyện câu hỏi, hiểu lời giải bằng tiếng Việt và theo dõi tiến độ. Bản beta hiện bắt đầu với một câu mẫu N5.</p>
-    <a class="arrowlink hero-action" href="/" target="_top" data-rv="fade" data-cursor>
+    <a class="arrowlink hero-action" href="/login?returnTo=%2Flearn" data-auth-link="learn" target="_top" data-rv="fade" data-cursor>
       <span>Thử câu mẫu N5</span>
       <span class="ar"><svg viewBox="0 0 14 14" fill="none"><path d="M3 11 11 3M5 3h6v6" stroke="#dfe7e0" stroke-width="1.3"/></svg></span>
     </a>
@@ -973,7 +985,7 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
     </div>
   </div>
 
-  <a class="peek" href="/" target="_top" data-view="3" data-rv="fade" data-cursor aria-label="Mở câu luyện tập mẫu N5">
+  <a class="peek" href="/login?returnTo=%2Flearn" data-auth-link="learn" target="_top" data-view="3" data-rv="fade" data-cursor aria-label="Mở câu luyện tập mẫu N5">
     <!-- data-frame, or the live view is blitted over the whole anchor and
          runs on down behind the caption instead of stopping at the frame -->
     <span class="peek-fr" data-frame></span>
@@ -1010,7 +1022,7 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
     <div class="gate-copy">
       <p class="lead" data-rv="up">Đích học tập là đi từ N5 đến N1 qua lộ trình tuần tự. Hiện bản beta chỉ có một câu mẫu N5 do nhóm phát triển tự biên soạn; đây không phải câu hỏi JLPT chính thức.</p>
       <p class="body" data-rv="up">N4–N1, giáo trình tuần tự và bài thi thử cuối cấp chưa có. Lộ trình dự kiến mở cấp sau khi hoàn thành nội dung bắt buộc và đạt ngưỡng điểm ước tính theo từng phần; kết quả không phải điểm JLPT chính thức. Bạn có thể tải PDF, DOCX hoặc TXT (tối đa 2 MB); tệp bắt đầu riêng tư. Khi Gemini được cấu hình, AI tạo bản nháp tóm tắt, câu hỏi, giải thích và nguồn để bạn kiểm tra, chỉnh sửa rồi xác nhận. Cần đồng ý trước khi gửi tệp. Sau đó bạn chọn giữ riêng tư, chia sẻ liên kết hoặc gửi xét duyệt công khai; quản trị viên duyệt mọi bài công khai.</p>
-      <a class="arrowlink" href="/tai-lieu" target="_top" data-rv="fade" data-cursor>
+      <a class="arrowlink" href="/login?returnTo=%2Fdocuments" data-auth-link="documents" target="_top" data-rv="fade" data-cursor>
         <span>Tạo bản nháp</span>
         <span class="ar"><svg viewBox="0 0 14 14" fill="none"><path d="M3 11 11 3M5 3h6v6" stroke="#dfe7e0" stroke-width="1.3"/></svg></span>
       </a>
@@ -1148,7 +1160,7 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
   <div class="eyebrow" data-rv="fade">04 — Thư viện cộng đồng</div>
   <h2 class="display" data-rv="up">Học cùng bài đã được duyệt.</h2>
   <p class="body-lg" data-rv="up">Khám phá bài học do người học chia sẻ sau khi quản trị viên kiểm tra. Bài học từ tài liệu riêng vẫn là bản nháp cho đến khi bạn tự xem lại và xác nhận.</p>
-  <a class="cta" href="/thu-vien" target="_top" data-rv="fade" data-cursor>
+  <a class="cta" href="/library" target="_top" data-rv="fade" data-cursor>
     <i></i><span>Mở thư viện</span>
     <svg viewBox="0 0 14 14" fill="none" width="13" height="13"><path d="M3 11 11 3M5 3h6v6" stroke="#dfe7e0" stroke-width="1.3"/></svg>
   </a>
@@ -1178,20 +1190,20 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
     </div>
     <div><h4>Học JLPT</h4><ul>
       <li><a href="#gate" data-cursor>Lộ trình N5–N1</a></li>
-      <li><a href="/" target="_top" data-cursor>Luyện câu mẫu N5</a></li>
-      <li><a href="/auth" target="_top" data-cursor>Theo dõi tiến độ</a></li>
-      <li><a href="/nguon-hoc-lieu" target="_top" data-cursor>Nguồn học liệu</a></li>
+      <li><a href="/login?returnTo=%2Flearn" data-auth-link="learn" target="_top" data-cursor>Luyện câu mẫu N5</a></li>
+      <li><a href="/login?returnTo=%2Flearn" data-auth-link="learn" target="_top" data-cursor>Theo dõi tiến độ</a></li>
+      <li><a href="/sources" target="_top" data-cursor>Nguồn học liệu</a></li>
     </ul></div>
     <div><h4>Tài liệu của bạn</h4><ul>
-      <li><a href="/tai-lieu" target="_top" data-cursor>Tải tài liệu</a></li>
-      <li><a href="/tai-lieu" target="_top" data-cursor>Tạo bản nháp AI</a></li>
-      <li><a href="/tai-lieu" target="_top" data-cursor>Xem lại và xác nhận</a></li>
-      <li><a href="/tai-lieu" target="_top" data-cursor>Quyền chia sẻ</a></li>
+      <li><a href="/login?returnTo=%2Fdocuments" data-auth-link="documents" target="_top" data-cursor>Tải tài liệu</a></li>
+      <li><a href="/login?returnTo=%2Fdocuments" data-auth-link="documents" target="_top" data-cursor>Tạo bản nháp AI</a></li>
+      <li><a href="/login?returnTo=%2Fdocuments" data-auth-link="documents" target="_top" data-cursor>Xem lại và xác nhận</a></li>
+      <li><a href="/login?returnTo=%2Fdocuments" data-auth-link="documents" target="_top" data-cursor>Quyền chia sẻ</a></li>
     </ul></div>
     <div><h4>Thư viện</h4><ul>
-      <li><a href="/thu-vien" target="_top" data-cursor>Bài học đã duyệt</a></li>
+      <li><a href="/library" target="_top" data-cursor>Bài học đã duyệt</a></li>
       <li><a href="#eternity" data-cursor>Quy trình kiểm duyệt</a></li>
-      <li><a href="/nguon-hoc-lieu" target="_top" data-cursor>Minh bạch nguồn học liệu</a></li>
+      <li><a href="/sources" target="_top" data-cursor>Minh bạch nguồn học liệu</a></li>
     </ul></div>
   </div>
   <div class="foot-base">
@@ -4149,6 +4161,55 @@ const $  = s => document.querySelector(s);
 const $$ = s => [].slice.call(document.querySelectorAll(s));
 const nav = $('#nav'), preEl = $('#pre'), preFill = $('#pre-fill'), prePct = $('#pre-pct');
 
+window.addEventListener('message', event => {
+  if (event.source !== window.parent || event.origin !== window.location.origin) return;
+  if (event.data?.type !== 'manabi:auth-state') return;
+  const learner = event.data.learner;
+  const signedIn = Boolean(learner);
+  $$('[data-auth-link]').forEach(link => {
+    const kind = link.dataset.authLink;
+    if (kind === 'learn') link.setAttribute('href', signedIn ? '/learn' : '/login?returnTo=%2Flearn');
+    if (kind === 'documents') link.setAttribute('href', signedIn ? '/documents' : '/login?returnTo=%2Fdocuments');
+    if (kind === 'signin') {
+      link.style.display = signedIn ? 'none' : '';
+      link.setAttribute('href', '/login');
+      const label = link.querySelector('span:not(.alt)');
+      const alternate = link.querySelector('.alt');
+      if (label) label.textContent = 'Đăng nhập';
+      if (alternate) alternate.textContent = 'ログイン';
+    }
+  });
+  const account = $('[data-account]');
+  const logout = $('[data-sign-out]');
+  account.classList.toggle('show', signedIn);
+  logout.classList.toggle('show', signedIn);
+  account.replaceChildren();
+  if (signedIn) {
+    const name = learner.displayName || learner.email || 'Học viên';
+    if (learner.avatarUrl && /^https:\/\//i.test(learner.avatarUrl)) {
+      const image = document.createElement('img');
+      image.src = learner.avatarUrl;
+      image.alt = '';
+      image.referrerPolicy = 'no-referrer';
+      account.append(image);
+    } else {
+      const initial = document.createElement('span');
+      initial.className = 'initial';
+      initial.textContent = name.slice(0, 1).toUpperCase();
+      account.append(initial);
+    }
+    const label = document.createElement('span');
+    label.className = 'name';
+    label.textContent = name;
+    account.append(label);
+    account.title = learner.email || name;
+  }
+});
+
+$('[data-sign-out]').addEventListener('click', () => {
+  window.parent.postMessage({ type: 'manabi:sign-out' }, window.location.origin);
+});
+
 function wireReveals() {
   splitHeadingWords();
   const groups = new Map();
@@ -4364,12 +4425,12 @@ function wireNav() {
   burger.setAttribute('aria-controls', 'navlinks');
   burger.setAttribute('aria-expanded', 'false');
   burger.addEventListener('click', () => {
-    if (vpW() > 820) return;
+    if (vpW() > 1050) return;
     setMenu(!nav.classList.contains('menu-open'));
   });
   links.forEach(link => link.addEventListener('click', closeMenu));
   addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
-  addEventListener('resize', () => { if (vpW() > 820) closeMenu(); }, { passive:true });
+  addEventListener('resize', () => { if (vpW() > 1050) closeMenu(); }, { passive:true });
   /* Which chapter each link actually points at, read off its href. The old
      rule was positional — link i lit for section i+1 — which silently assumed
      one link per section in matching order. With five links over four chapters

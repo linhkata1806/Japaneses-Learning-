@@ -1,7 +1,7 @@
 import { env } from "cloudflare:workers";
 import { getChatGPTUser } from "@/app/chatgpt-auth";
 
-export type Learner = { id: string; email: string; displayName: string; provider: "chatgpt" | "email" };
+export type Learner = { id: string; email: string; displayName: string; provider: "chatgpt" | "email"; avatarUrl?: string | null };
 
 export async function getLearner(request: Request): Promise<Learner | null> {
   const token = request.headers.get("authorization")?.match(/^Bearer (.+)$/i)?.[1];
@@ -12,9 +12,10 @@ export async function getLearner(request: Request): Promise<Learner | null> {
         headers: { authorization: `Bearer ${token}`, apikey: env.SUPABASE_PUBLISHABLE_KEY },
       });
       if (!response.ok) return null;
-      const user = await response.json() as { id?: string; email?: string; email_confirmed_at?: string | null; user_metadata?: { full_name?: string } };
+      const user = await response.json() as { id?: string; email?: string; email_confirmed_at?: string | null; user_metadata?: { full_name?: string; avatar_url?: string } };
       if (!user.id || !user.email || !user.email_confirmed_at) return null;
-      return linkIdentity({ id: `email:${user.id}`, email: user.email, displayName: user.user_metadata?.full_name || user.email, provider: "email" });
+      const avatar = user.user_metadata?.avatar_url;
+      return linkIdentity({ id: `email:${user.id}`, email: user.email, displayName: user.user_metadata?.full_name || user.email, provider: "email", avatarUrl: avatar && /^https:\/\//i.test(avatar) ? avatar : null });
     } catch {
       return null;
     }

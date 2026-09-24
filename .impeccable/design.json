@@ -6,6 +6,11 @@
     "colorMeta": {
       "harbor-ink": { "role": "primary", "displayName": "Harbor Ink", "tonalRamp": ["oklch(15% 0.080 249)", "oklch(26% 0.080 249)", "oklch(37% 0.080 249)", "oklch(48% 0.080 249)", "oklch(59% 0.080 249)", "oklch(70% 0.080 249)", "oklch(81% 0.080 249)", "oklch(92% 0.080 249)"] },
       "notebook-coral": { "role": "secondary", "displayName": "Notebook Coral", "tonalRamp": ["oklch(15% 0.179 33)", "oklch(26% 0.179 33)", "oklch(37% 0.179 33)", "oklch(48% 0.179 33)", "oklch(59% 0.179 33)", "oklch(70% 0.179 33)", "oklch(81% 0.179 33)", "oklch(92% 0.179 33)"] },
+      "vermilion": { "role": "secondary", "displayName": "Vermilion", "tonalRamp": ["oklch(15% 0.180 29)", "oklch(26% 0.180 29)", "oklch(37% 0.180 29)", "oklch(48% 0.180 29)", "oklch(59% 0.180 29)", "oklch(70% 0.180 29)", "oklch(81% 0.180 29)", "oklch(92% 0.180 29)"] },
+      "night-ink": { "role": "neutral", "displayName": "Night Ink", "tonalRamp": ["oklch(15% 0.010 160)", "oklch(26% 0.010 160)", "oklch(37% 0.010 160)", "oklch(48% 0.010 160)", "oklch(59% 0.010 160)", "oklch(70% 0.010 160)", "oklch(81% 0.010 160)", "oklch(92% 0.010 160)"] },
+      "night-raised": { "role": "neutral", "displayName": "Night Raised", "tonalRamp": ["oklch(15% 0.012 160)", "oklch(26% 0.012 160)", "oklch(37% 0.012 160)", "oklch(48% 0.012 160)", "oklch(59% 0.012 160)", "oklch(70% 0.012 160)", "oklch(81% 0.012 160)", "oklch(92% 0.012 160)"] },
+      "bone": { "role": "neutral", "displayName": "Bone", "tonalRamp": ["oklch(15% 0.015 150)", "oklch(26% 0.015 150)", "oklch(37% 0.015 150)", "oklch(48% 0.015 150)", "oklch(59% 0.015 150)", "oklch(70% 0.015 150)", "oklch(81% 0.015 150)", "oklch(92% 0.015 150)"] },
+      "bone-dim": { "role": "neutral", "displayName": "Bone Dim", "tonalRamp": ["oklch(15% 0.012 150)", "oklch(26% 0.012 150)", "oklch(37% 0.012 150)", "oklch(48% 0.012 150)", "oklch(59% 0.012 150)", "oklch(70% 0.012 150)", "oklch(81% 0.012 150)", "oklch(92% 0.012 150)"] },
       "mist": { "role": "neutral", "displayName": "Mist", "tonalRamp": ["oklch(15% 0.003 248)", "oklch(26% 0.003 248)", "oklch(37% 0.003 248)", "oklch(48% 0.003 248)", "oklch(59% 0.003 248)", "oklch(70% 0.003 248)", "oklch(81% 0.003 248)", "oklch(92% 0.003 248)"] },
       "ink": { "role": "neutral", "displayName": "Ink", "tonalRamp": ["oklch(15% 0.044 247)", "oklch(26% 0.044 247)", "oklch(37% 0.044 247)", "oklch(48% 0.044 247)", "oklch(59% 0.044 247)", "oklch(70% 0.044 247)", "oklch(81% 0.044 247)", "oklch(92% 0.044 247)"] },
       "white": { "role": "neutral", "displayName": "White", "tonalRamp": ["oklch(15% 0.000 90)", "oklch(26% 0.000 90)", "oklch(37% 0.000 90)", "oklch(48% 0.000 90)", "oklch(59% 0.000 90)", "oklch(70% 0.000 90)", "oklch(81% 0.000 90)", "oklch(92% 0.000 90)"] },
@@ -29,7 +34,8 @@
       { "name": "browse-hover", "value": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)", "purpose": "Hover depth on community lesson links." }
     ],
     "motion": [
-      { "name": "control-transition", "value": "150ms cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Color, border, and shadow changes on interactive controls." }
+      { "name": "control-transition", "value": "150–250ms cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Color, border, and shadow changes that confirm learner interaction." },
+      { "name": "preview-atmosphere", "value": "Slow, scene-aware motion and fades; /kage-preview only", "purpose": "Preserve the approved landing's cinematic motion without carrying it into answering flows." }
     ],
     "breakpoints": [
       { "name": "sm", "value": "640px" },
@@ -82,7 +88,7 @@
       "name": "Header Link",
       "kind": "nav",
       "refersTo": "navigation-link",
-      "description": "Compact learner navigation or return link in the white header.",
+      "description": "Compact learner navigation or return link within the dark frame and light work surface.",
       "html": "<a class=\"ds-navigation-link\" href=\"#materials\">Tài liệu của tôi</a>",
       "css": ".ds-navigation-link { display: inline-flex; align-items: center; min-height: 32px; padding: 4px 12px; border-radius: 9999px; background: #fff; color: #1c456b; font: 500 14px/20px Arial, 'Noto Sans JP', 'Yu Gothic', sans-serif; text-decoration: none; transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1), color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-navigation-link:hover { background: #eef5fb; text-decoration: underline; text-underline-offset: 4px; } .ds-navigation-link:focus-visible { outline: 0; box-shadow: 0 0 0 3px rgb(110 156 197 / 0.5); }"
     },
@@ -97,36 +103,41 @@
     {
       "name": "Manabi Brand",
       "kind": "brand",
-      "description": "Shared linked wordmark for learner route headers, with full and compact layouts.",
+      "description": "Shared linked wordmark for learner route headers, with full, compact, and inverse layouts.",
       "html": "<a href=\"/\" aria-label=\"Manabi — trang học\"><span>日</span><span>Manabi<span>.</span></span></a>",
-      "css": "Uses Harbor Ink for the wordmark and Notebook Coral for the terminal dot; compact headers omit the 日 tile."
+      "css": "Uses Harbor Ink for the standard wordmark and Notebook Coral for the terminal dot; inverse headers use Bone text with a muted dark tile and Coral 日 mark. Compact headers omit the 日 tile."
     }
   ],
   "narrative": {
     "northStar": "A Clear Study Desk",
-    "overview": "Manabi is a calm, practical workspace for Vietnamese-speaking independent learners studying Japanese and preparing for the JLPT. Mist surfaces, clear type, and familiar controls keep attention on the next study action. Harbor Ink carries the main hierarchy; Notebook Coral marks a small number of identity and progress cues.\n\nThe interface should make it easy to answer a question, understand its explanation, and revisit learning material. Keep Vietnamese guidance legible beside Japanese study text, and use clear states to distinguish a sample, an AI draft, a learner-confirmed lesson, and reviewed public material. The isolated `/kage-preview` route embeds a separate authored visual world; keep it scoped to that preview rather than applying its styling to Manabi learner flows.",
+    "overview": "Manabi is a calm, practical workspace for Vietnamese-speaking independent learners studying Japanese and preparing for the JLPT. `/kage-preview` is the approved visual reference for deep night ink, sage-white lettering, restrained vermilion, Japanese cinematic atmosphere, image blending, and deliberate transitions. Carry these qualities into learner pages as compact surfaces, precise contrast, and purposeful motion. Learner pages remain task-first: pair a dark frame with light Mist and White work surfaces; keep Japanese study text clear beside Vietnamese guidance. The landing page's full-screen Three.js scene and oversized wordmark stay on `/kage-preview`; workflows inherit its visual language, never its composition or effects.",
     "keyCharacteristics": [
-      "Calm, clear, and practical.",
-      "Cool Mist surfaces with white work panels and fine blue-gray borders.",
-      "Harbor Ink establishes hierarchy; Notebook Coral stays a small cue.",
-      "Japanese examples receive room to breathe within Vietnamese-language guidance."
+      "Calm, clear, and practical, with a Japanese cinematic undertone.",
+      "Dark framing surfaces meet light Mist and White study surfaces.",
+      "Harbor Ink leads actions; Coral and Vermilion remain small cues.",
+      "Japanese examples receive room to breathe within Vietnamese guidance.",
+      "Purposeful image grading and short, state-led motion."
     ],
     "rules": [
       { "name": "The Coral Cue Rule", "body": "Keep Notebook Coral to small identity or progress cues. Use Harbor Ink for primary actions and study links.", "section": "colors" },
       { "name": "The Study-First Type Rule", "body": "Set Japanese study text apart through size and spacing while keeping the surrounding Vietnamese explanation easy to find.", "section": "typography" },
-      { "name": "The Quiet Rest Rule", "body": "Keep the practice surface close to the page; reserve stronger depth for items that invite browsing.", "section": "elevation" }
+      { "name": "The Quiet Rest Rule", "body": "Keep the practice surface close to the page; reserve stronger depth for items that invite browsing.", "section": "elevation" },
+      { "name": "The Lantern Contrast Rule", "body": "Use a dark Japanese-inspired frame around light task surfaces; keep answers and explanations on the lighter surface.", "section": "colors" }
     ],
     "dos": [
       "**Do** use Harbor Ink for primary actions and Notebook Coral for small brand or progress cues.",
       "**Do** keep Vietnamese guidance and Japanese study text visually connected and easy to distinguish.",
       "**Do** use clear borders and Mist-to-White contrast to define work areas.",
       "**Do** preserve honest visual differences between sample, draft, confirmed, and approved learning content.",
-      "**Do** keep `/kage-preview` isolated from the Manabi learner interface."
+      "**Do** use `/kage-preview` as the visual reference for contrast, Japanese atmosphere, image grading, navigation detail, and section rhythm.",
+      "**Do** preserve dark-frame/light-task contrast while keeping answers and explanations on calm, readable surfaces.",
+      "**Do** keep motion brief, responsive, and tied to learner input."
     ],
     "donts": [
       "**Don't** spread Notebook Coral across large surfaces or use it as the default action color.",
       "**Don't** rely on color alone for answer correctness or content review state.",
-      "**Don't** mix Kage’s separate preview styling into Manabi’s learner routes.",
+      "**Don't** copy the landing page's full Three.js scene, oversized hero type, or cinematic scroll effects into learner flows.",
+      "**Don't** place decorative imagery behind question text, answers, or explanations.",
       "**Don't** add shadows to every panel; use depth only where a control or browsing choice needs it."
     ]
   }

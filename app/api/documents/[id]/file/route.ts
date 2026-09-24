@@ -1,10 +1,12 @@
 import { env } from "cloudflare:workers";
 import { getLearner, jsonError } from "@/lib/server-auth";
+import { documentUploadUnavailableMessage, getDocumentStorage } from "@/lib/document-storage";
 
 export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
   const learner = await getLearner(request);
   if (!learner) return jsonError("Cần đăng nhập để tải tài liệu.", 401);
-  if (!env.DB || !env.BUCKET) return jsonError("Tài liệu chưa khả dụng.", 503);
+  const storage = getDocumentStorage();
+  if (!env.DB || !storage) return jsonError(documentUploadUnavailableMessage, 503);
   const { id } = await context.params;
   const row = await env.DB.prepare(
     "SELECT owner_id AS ownerId, filename, mime_type AS mimeType, storage_key AS storageKey, visibility FROM documents WHERE id = ?"
@@ -14,9 +16,11 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
   if (row.ownerId !== learner.id && !(row.visibility === "PUBLIC" && admins.includes(learner.email.toLowerCase()))) {
     return jsonError("Bạn không có quyền xem tài liệu này.", 403);
   }
-  const object = await env.BUCKET.get(row.storageKey);
+  let object: Blob | null;
+  try { object = await storage.get(row.storageKey); }
+  catch { return jsonError("Chưa thể tải tệp gốc. Vui lòng thử lại.", 503); }
   if (!object) return jsonError("Tệp gốc không còn khả dụng.", 404);
-  return new Response(object.body, {
+  return new Response(object, {
     headers: {
       "content-type": row.mimeType,
       "content-disposition": `attachment; filename*=UTF-8''${encodeURIComponent(row.filename)}`,
