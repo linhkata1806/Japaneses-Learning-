@@ -4,6 +4,11 @@ description: A calm, practical workspace for independent Japanese and JLPT study
 colors:
   harbor-ink: "#1c456b"
   notebook-coral: "#e5593f"
+  vermilion: "#e0231c"
+  night-ink: "#05070a"
+  night-raised: "#0a0e12"
+  bone: "#dfe7e0"
+  bone-dim: "#aab4ad"
   mist: "#f5f7f9"
   ink: "#1b3043"
   white: "#ffffff"
@@ -97,27 +102,29 @@ components:
 
 ## Overview
 
-**Creative North Star: “A Clear Study Desk”**
+**Creative North Star: “A Clear Study Desk in the Lantern Light”**
 
-Manabi is a calm, practical workspace for Vietnamese-speaking independent learners studying Japanese and preparing for the JLPT. Mist surfaces, clear type, and familiar controls keep attention on the next study action. Harbor Ink carries the main hierarchy; Notebook Coral marks a small number of identity and progress cues.
+Manabi is a calm, practical workspace for Vietnamese-speaking independent learners studying Japanese and preparing for the JLPT. `/` is the approved visual reference for Manabi's expressive side: deep night ink, sage-white lettering, vermilion points of light, Japanese cinematic atmosphere, layered imagery, and deliberate transitions. Carry those qualities into learner pages as compact surfaces, precise contrast, restrained color, and purposeful motion.
 
-The interface should make it easy to answer a question, understand its explanation, and revisit learning material. Keep Vietnamese guidance legible beside Japanese study text, and use clear states to distinguish a sample, an AI draft, a learner-confirmed lesson, and reviewed public material. The isolated `/kage-preview` route embeds a separate authored visual world; keep it scoped to that preview rather than applying its styling to Manabi learner flows.
+Learner pages remain task-first. Pair a dark, quiet frame with light Mist and White reading surfaces so questions and explanations are immediately legible. Harbor Ink anchors actions and links; Notebook Coral and Vermilion are brief identity, active-navigation, or progress cues. Japanese study text receives a clear typographic step above Vietnamese guidance without becoming display type. Keep the landing page's full-screen Three.js scene and oversized wordmark on `/`; practice, lessons, and documents inherit its visual language, never its composition or effects.
 
 **Key Characteristics:**
 - Calm, clear, and practical.
-- Cool Mist surfaces with white work panels and fine blue-gray borders.
-- Harbor Ink establishes hierarchy; Notebook Coral stays a small cue.
+- Dark night-ink framing against Mist and White task surfaces.
+- Harbor Ink establishes action hierarchy; coral and vermilion stay small cues.
 - Japanese examples receive room to breathe within Vietnamese-language guidance.
+- Cinematic Japanese mood comes from atmosphere, image treatment, and transitions; learner controls stay familiar and quiet.
 
 ## Colors
 
-The palette pairs deep blue with cool, soft neutrals and a restrained warm accent.
+The palette pairs deep blue with cool, soft neutrals, night ink, sage-white text, and a restrained warm accent. Learner screens use dark surfaces to frame a task and light surfaces to carry reading and interaction; do not force one theme across the whole viewport.
 
 ### Primary
 - **Harbor Ink**: The main action and brand color. Use it for primary buttons, active learning navigation, and the Manabi wordmark.
 
 ### Secondary
-- **Notebook Coral**: A warm study cue used sparingly for the wordmark mark and progress emphasis.
+- **Notebook Coral**: A warm study cue used sparingly for the wordmark mark, active navigation, and progress emphasis.
+- **Vermilion**: The sharper Kage reference red. Use it for small current-state marks and points of light, not large buttons or answer surfaces.
 - **Pale Blue**: A quiet selection and supporting surface for level labels, hints, and secondary emphasis.
 - **Study Link Blue**: A readable link and metadata color for source references and lesson details.
 - **Study Tint**: A pale blue surface for selected controls, hover states, and quiet learner notices.
@@ -130,9 +137,13 @@ The palette pairs deep blue with cool, soft neutrals and a restrained warm accen
 - **Mist Panel**: A low-contrast surface for secondary panels and quiet state backgrounds.
 - **Border**: Fine outlines and dividers between sections and controls.
 - **Focus Blue**: Keyboard focus ring and focused-control border.
+- **Night Ink / Night Raised**: Deep charcoal-green surfaces for the compact brand frame, headings, and occasional dark section breaks.
+- **Bone / Bone Dim**: Soft sage-white text on night surfaces. Keep body text at readable contrast and prefer Bone over pure white for large areas.
 
 ### Named Rules
 **The Coral Cue Rule.** Keep Notebook Coral to small identity or progress cues. Use Harbor Ink for primary actions and study links.
+
+**The Lantern Contrast Rule.** Let a dark Japanese-inspired frame lead into light work surfaces; keep answer text and explanations on the lighter surface.
 
 ## Typography
 
@@ -140,7 +151,7 @@ The palette pairs deep blue with cool, soft neutrals and a restrained warm accen
 **Body Font:** Arial (with Noto Sans JP, Yu Gothic, and sans-serif fallbacks)
 **Label Font:** The same family, in a compact uppercase treatment where the eyebrow style is used.
 
-**Character:** A familiar sans-serif keeps instructions and controls direct. Japanese text uses the same system stack so Japanese examples sit naturally beside Vietnamese explanations without adding a decorative voice.
+**Character:** A familiar sans-serif keeps instructions and controls direct. Japanese text uses the same system stack so examples sit naturally beside Vietnamese explanations. The landing's custom wordmark and display scale belong to `/`, not task UI.
 
 ### Hierarchy
 - **Headline** (600, 28px; 32px at medium widths, tight line-height): Page headings and section titles.
@@ -148,17 +159,18 @@ The palette pairs deep blue with cool, soft neutrals and a restrained warm accen
 - **Body** (400, 16px, 28px line-height): Instructions and explanations; keep long reading copy near 65–70ch.
 - **Japanese study text** (500, 24px; about 26px at medium widths, 1.9 line-height): Give practice questions a distinct, readable block.
 - **Label** (800, about 13px, 0.11em tracking, uppercase): Small eyebrow labels only; do not use this treatment for ordinary navigation.
+- **Landing display**: The Kage-derived cinematic type scale is reserved for `/`; learner headings remain compact and predictable.
 
 ### Named Rules
 **The Study-First Type Rule.** Set Japanese study text apart through size and spacing while keeping the surrounding Vietnamese explanation easy to find.
 
 ## Layout
 
-Use a centered, single-column learning workspace on small screens. The practice page caps its main reading area at 896px, while materials and community pages use a wider 1200px content frame; the shared header can extend to 1420px. Keep mobile side padding near 20px and increase it to 32–40px at wider breakpoints. Let document forms stack on narrow screens, then place the upload and document list beside each other at large widths. Answer options remain one column on phones and become a two-column grid from the small breakpoint. Use an 8px-based rhythm, with 16px gaps between related blocks, 24px panel padding, and 32px section separation.
+Use a centered, single-column learning workspace on small screens. The practice page caps its main reading area at 896px, while materials and community pages use a wider 1200px content frame; the shared header can extend to 1420px. Keep mobile side padding near 20px and increase it to 32–40px at wider breakpoints. Let document forms stack on narrow screens, then place the upload and document list beside each other at large widths. Answer options remain one column on phones and become a two-column grid from the small breakpoint. Keep the landing's spacious section rhythm in shorter intervals: an 8px-based scale, 16px gaps inside task groups, 24px panel padding, and 32px between major learning sections. Separate sections with quiet rules, tone changes, and breathing room, not cinematic scroll choreography.
 
 ## Elevation & Depth
 
-Depth is lightly layered. Mist page backgrounds sit behind white panels; borders define the panel edges, with small shadows on reusable controls and cards. The practice question panel stays flat, while browsable community lessons deepen on hover. Hover lift is expressed through border and shadow changes without moving the content.
+Depth is lightly layered. Dark framing surfaces set the Japanese night atmosphere; Mist page backgrounds and White panels carry study work. Images, when a surface needs them, use considered object positioning, a cool-dark grade with restrained warm highlights, and subtle edge or tonal blending so they sit within the environment. Keep image detail away from question copy. The practice question panel stays flat, while browsable community lessons deepen on hover. Use a restrained lift or border change without moving task content.
 
 ### Shadow Vocabulary
 - **Control edge** (`0 1px 2px 0 rgb(0 0 0 / 0.05)`): Small resting shadow on outline buttons and text fields.
@@ -168,9 +180,15 @@ Depth is lightly layered. Mist page backgrounds sit behind white panels; borders
 ### Named Rules
 **The Quiet Rest Rule.** Keep the practice surface close to the page; reserve stronger depth for items that invite browsing.
 
+## Motion & Transitions
+
+On `/`, preserve the authored motion language: slow environmental movement, restrained parallax, scene-aware fades, and chapter transitions that follow the scroll. These effects are part of the landing composition and stay on that route.
+
+In learner workflows, motion confirms a local state change. Use brief 150–250ms color, border, and shadow transitions for selection, focus, feedback, and browsing hover. Reveal feedback in place; do not animate the learner through a cinematic sequence or delay the next action. Use spacing, fine rules, and subtle surface changes to mark transitions between learning sections. Respect reduced-motion preferences.
+
 ## Shapes
 
-Buttons and fields use gently rounded corners (10px). Content panels use larger, soft corners (16px); badges and compact account labels use pill shapes. Fine borders carry most of the structure. Keep learning text blocks rectangular and spacious rather than enclosing each paragraph in its own card.
+Buttons and fields use gently rounded corners (10px). Content panels use larger, soft corners (12–16px); badges and compact account labels use pill shapes. Fine borders carry most of the structure. Keep learning text blocks rectangular and spacious rather than enclosing each paragraph in its own card. Cinematic masks and scene framing are reserved for imagery, never answer controls.
 
 ## Components
 
@@ -194,13 +212,14 @@ Buttons and fields use gently rounded corners (10px). Content panels use larger,
 - **Disabled / invalid:** Disabled fields lower opacity; invalid state uses the semantic error color and ring.
 
 ### Navigation
-- **Style:** A white header with a fine bottom divider. Manabi uses Harbor Ink; section links stay compact and become underlined or gain a pale surface on hover. On narrow screens, let links wrap rather than compressing their labels.
+- **Style:** A compact Night Ink header with a fine divider and Bone text can frame the light study workspace. Keep navigation labels direct and familiar; use a fine underline or one small Coral/Vermilion marker for the current route. On narrow screens, let links wrap rather than compressing their labels.
 
-The shared `ManabiBrand` component owns the linked wordmark and coral mark. Use its compact form in secondary route headers and its full form in the main learner header. Use the `notebook-coral`, `study-link`, and `study-tint` theme utilities for brand emphasis, study links, and pale interactive selection surfaces instead of repeating color literals.
+The shared `ManabiBrand` component owns the linked wordmark and coral mark. Use its compact form in secondary route headers and its full form in the main learner header; an inverse treatment may sit on Night Ink. Use the `notebook-coral`, `study-link`, and `study-tint` theme utilities for brand emphasis, study links, and pale interactive selection surfaces instead of repeating color literals.
 
 ### Practice Options
 - **Style:** Full-width answer controls with a minimum 62px height, 16px corners, and left-aligned Japanese answer text.
 - **State:** Hover adds a pale surface and slightly stronger border. Selection gets a clear border and neutral fill. After submission, distinguish correct and incorrect choices with separate muted status colors and an explanation block.
+- **Motion:** Keep state changes to roughly 150–250ms. Motion confirms selection, submission, or progress; it does not delay the next answer.
 
 ### Progress
 - **Style:** A slim rounded track in a pale blue-gray with a Harbor Ink or Notebook Coral fill depending on the established screen treatment. Pair the bar with a readable progress label; do not rely on color alone.
@@ -209,13 +228,16 @@ The shared `ManabiBrand` component owns the linked wordmark and coral mark. Use 
 
 ### Do:
 - **Do** use Harbor Ink for primary actions and Notebook Coral for small brand or progress cues.
+- **Do** use `/` as the visual north star for contrast, Japanese atmosphere, image grading, navigation detail, and section rhythm.
 - **Do** keep Vietnamese guidance and Japanese study text visually connected and easy to distinguish.
 - **Do** use clear borders and Mist-to-White contrast to define work areas.
 - **Do** preserve honest visual differences between sample, draft, confirmed, and approved learning content.
-- **Do** keep `/kage-preview` isolated from the Manabi learner interface.
+- **Do** preserve the dark-frame/light-task contrast while keeping answers and explanations on calm, readable surfaces.
+- **Do** keep motion brief, responsive, and tied to learner input.
 
 ### Don't:
 - **Don't** spread Notebook Coral across large surfaces or use it as the default action color.
 - **Don't** rely on color alone for answer correctness or content review state.
-- **Don't** mix Kage’s separate preview styling into Manabi’s learner routes.
+- **Don't** copy the landing page's full Three.js scene, oversized hero type, or cinematic scroll effects into learner flows.
+- **Don't** place decorative images or overlays behind question text, answers, or explanations.
 - **Don't** add shadows to every panel; use depth only where a control or browsing choice needs it.

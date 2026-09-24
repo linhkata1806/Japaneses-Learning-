@@ -26,11 +26,11 @@ This is the confirmed product mechanism, not a claim of market exclusivity or of
 
 ## Operating Context
 
-- Practice at `/`: answer a question, check the answer, read its Vietnamese explanation, and retry. Signing in enables stored history for the built-in sample and access to progress statistics and mistake review.
-- Personal materials at `/tai-lieu`: upload a source document, consent to processing, generate a draft, inspect and edit its content and source references, then confirm it and choose visibility.
-- Community learning at `/thu-vien` and `/bai/[id]`: browse approved lessons and work through their questions. Shared lessons use `/share/[token]`; recipients must sign in.
-- Publication review at `/quan-tri`: authorized administrators compare a submitted lesson with its source, approve it, or reject it with a reason.
-- Content transparency at `/nguon-hoc-lieu`: explain source provenance and distinguish beta samples from reviewed or official material.
+- Practice at `/learn`: answer a question, check the answer, read its Vietnamese explanation, and retry. Signing in enables stored history for the built-in sample and access to progress statistics and mistake review.
+- Personal materials at `/documents`: upload a source document, consent to processing, generate a draft, inspect and edit its content and source references, then confirm it and choose visibility.
+- Community learning at `/library` and `/lesson/[id]`: browse approved lessons and work through their questions. Shared lessons use `/share/[token]`; recipients must sign in.
+- Publication review at `/admin`: authorized administrators compare a submitted lesson with its source, approve it, or reject it with a reason.
+- Content transparency at `/sources`: explain source provenance and distinguish beta samples from reviewed or official material.
 
 ## Capabilities and Constraints
 
@@ -71,10 +71,10 @@ No new visual direction or additional brand-voice commitment was established dur
 
 - `README.md`: beta scope, intended progression, local operation, account behavior, and AI consent/quota notes.
 - `app/layout.tsx` and `public/favicon.svg`: existing product name, Vietnamese document language, and identity asset.
-- `app/page.tsx`, `app/api/attempts/route.ts`, and `app/api/stats/route.ts`: built-in N5 practice, feedback, and persisted progress behavior.
-- `app/tai-lieu/page.tsx`, `app/api/documents/`, and `lib/generated-content.ts`: upload, AI drafting, editing, confirmation, and visibility workflow.
+- `app/learn/page.tsx`, `app/api/attempts/route.ts`, and `app/api/stats/route.ts`: built-in N5 practice, feedback, and persisted progress behavior.
+- `app/documents/page.tsx`, `app/api/documents/`, and `lib/generated-content.ts`: upload, AI drafting, editing, confirmation, and visibility workflow.
 - `components/lesson-view.tsx`, `app/api/library/route.ts`, `app/api/share/[token]/route.ts`, and `app/api/admin/reviews/`: generated lesson experience, access rules, and public moderation.
-- `app/nguon-hoc-lieu/page.tsx` and `app/api/examples/route.ts`: Tatoeba examples with source links, author, and license information. These support further reading and are not automatically validated questions or explanations.
+- `app/sources/page.tsx` and `app/api/examples/route.ts`: Tatoeba examples with source links, author, and license information. These support further reading and are not automatically validated questions or explanations.
 - OpenJLPT is documented as a source under evaluation, not imported content. Official JLPT samples are linked for reference; links are not permission to reproduce their questions or audio.
 
 No evidence of teacher endorsement, guaranteed results, official affiliation, testimonials, or a complete exam bank was established. Future work must not invent these claims.

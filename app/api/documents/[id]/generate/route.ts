@@ -1,6 +1,7 @@
 import { env } from "cloudflare:workers";
 import { getLearner, jsonError } from "@/lib/server-auth";
 import { generatedContentSchema } from "@/lib/generated-content";
+import { documentUploadUnavailableMessage, getDocumentStorage } from "@/lib/document-storage";
 
 function vnDay(date: Date): string {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ho_Chi_Minh", year: "numeric", month: "2-digit", day: "2-digit" }).format(date);
@@ -15,7 +16,8 @@ function toBase64(bytes: Uint8Array): string {
 export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
   const learner = await getLearner(request);
   if (!learner) return jsonError("Cần đăng nhập để tạo bài học.", 401);
-  if (!env.DB || !env.BUCKET) return jsonError("Lưu trữ chưa khả dụng.", 503);
+  const storage = getDocumentStorage();
+  if (!env.DB || !storage) return jsonError(documentUploadUnavailableMessage, 503);
   if (!env.GEMINI_API_KEY) return jsonError("AI chưa được kết nối. Vui lòng thử lại sau.", 503);
   const { id } = await context.params;
   let body: { consent?: boolean };
@@ -26,7 +28,9 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     "SELECT id, owner_id AS ownerId, mime_type AS mimeType, storage_key AS storageKey FROM documents WHERE id = ? AND owner_id = ?"
   ).bind(id, learner.id).first<{ id: string; ownerId: string; mimeType: string; storageKey: string }>();
   if (!document) return jsonError("Không tìm thấy tài liệu.", 404);
-  const object = await env.BUCKET.get(document.storageKey);
+  let object: Blob | null;
+  try { object = await storage.get(document.storageKey); }
+  catch { return jsonError("Chưa thể tải tệp gốc. Vui lòng thử lại.", 503); }
   if (!object) return jsonError("Tệp gốc không còn khả dụng.", 404);
   const bytes = new Uint8Array(await object.arrayBuffer());
   const prompt = "Dựa CHỈ trên tài liệu đính kèm, tạo một bài học ngắn bằng tiếng Việt để luyện thi JLPT. Giữ nguyên tiếng Nhật gốc. Trả JSON có title, level (N5-N1), summary và 1-8 câu hỏi trắc nghiệm; mỗi câu có question, đúng 4 options, answerIndex 0-3, explanation và sourceHint là đoạn/trang hỗ trợ đáp án. Không bịa câu hỏi nếu thiếu bằng chứng; không sao chép dài nguyên văn tài liệu. Nếu tài liệu không phù hợp, trả thông báo lỗi trong summary và không tự nghĩ ra kiến thức.";

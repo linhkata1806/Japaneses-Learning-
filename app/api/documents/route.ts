@@ -1,5 +1,6 @@
 import { env } from "cloudflare:workers";
 import { ensureProfile, getLearner, jsonError } from "@/lib/server-auth";
+import { documentUploadUnavailableMessage, getDocumentStorage } from "@/lib/document-storage";
 
 const allowed = new Map([
   ["application/pdf", ".pdf"],
@@ -25,7 +26,8 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const learner = await getLearner(request);
   if (!learner) return jsonError("Cần đăng nhập để tải tài liệu.", 401);
-  if (!env.DB || !env.BUCKET) return jsonError("Lưu trữ tài liệu chưa khả dụng.", 503);
+  const storage = getDocumentStorage();
+  if (!env.DB || !storage) return jsonError(documentUploadUnavailableMessage, 503);
   let form: FormData;
   try { form = await request.formData(); } catch { return jsonError("Không đọc được tệp tải lên.", 400); }
   const file = form.get("file");
@@ -36,15 +38,17 @@ export async function POST(request: Request) {
 
   const id = crypto.randomUUID();
   const key = `documents/${learner.id.replace(/[^a-zA-Z0-9:_-]/g, "_")}/${id}`;
+  let uploaded = false;
   try {
     await ensureProfile(learner);
-    await env.BUCKET.put(key, await file.arrayBuffer(), { httpMetadata: { contentType: file.type } });
+    await storage.put(key, file);
+    uploaded = true;
     await env.DB.prepare(
       "INSERT INTO documents (id, owner_id, filename, mime_type, byte_size, storage_key, status, visibility, created_at) VALUES (?, ?, ?, ?, ?, ?, 'UPLOADED', 'PRIVATE', ?)"
     ).bind(id, learner.id, file.name, file.type, file.size, key, new Date().toISOString()).run();
     return Response.json({ id, filename: file.name, status: "UPLOADED" }, { status: 201 });
   } catch {
-    await env.BUCKET.delete(key).catch(() => {});
+    if (uploaded) await storage.delete(key).catch(() => {});
     return jsonError("Chưa thể lưu tệp. Vui lòng thử lại.", 503);
   }
 }
